@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FUEL">
+<meta name="theme-color" content="#0c0c0c">
+<title>FUEL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0c0c0c;--card:#141414;--border:#1e1e1e;--text:#f0ede8;--muted:#555;--accent:#7FFFD4}
+html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;height:100%;overscroll-behavior:none}
+body{padding-top:env(safe-area-inset-top)}
+#app{max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+
+/* Typography */
+.bebas{font-family:'Bebas Neue',sans-serif;letter-spacing:1px}
+.lbl{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px}
+
+/* Header */
+#hdr{padding:20px 20px 0}
+#mode-pill{display:inline-flex;align-items:center;gap:8px;background:#181818;border:1px solid #333;border-radius:30px;padding:7px 14px;cursor:pointer;margin-bottom:12px}
+#mode-dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+#mode-lbl{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--accent)}
+.hdr-row{display:flex;justify-content:space-between;align-items:flex-start}
+#app-title{font-family:'Bebas Neue',sans-serif;font-size:46px;line-height:1;color:var(--text)}
+#app-sub{font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:2px}
+#wt-badge{background:#181818;border:1px solid #222;border-radius:10px;padding:8px 14px;text-align:right;cursor:pointer}
+#wt-val{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--accent);line-height:1}
+#wt-lbl{font-size:9px;color:#444;letter-spacing:1px}
+#jump-banner{margin:12px 0 0;background:rgba(255,212,71,.08);border:1px solid rgba(255,212,71,.25);border-radius:10px;padding:10px 14px;display:none;justify-content:space-between;align-items:center}
+#jump-day-txt{font-family:'Bebas Neue',sans-serif;font-size:24px;color:#FFD447}
+#jump-dots{display:flex;gap:4px}
+.jdot{width:10px;height:10px;border-radius:50%;background:#2a2a2a}
+
+/* Tabs */
+#tab-bar{display:flex;padding:16px 20px 0;gap:3px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#tab-bar::-webkit-scrollbar{display:none}
+.tb{flex:0 0 auto;padding:9px 14px;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;background:transparent;color:#444;border:none;cursor:pointer;border-radius:6px;white-space:nowrap;transition:all .2s}
+.tb.active{background:var(--accent);color:#0c0c0c}
+
+/* Cards / Sections */
+.sec{padding:16px 20px 0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+.card-row{display:flex;justify-content:space-between;align-items:center}
+
+/* Buttons */
+.btn{border:none;border-radius:8px;padding:11px 18px;cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;font-size:13px;transition:all .15s}
+.btn-p{background:var(--accent);color:#0c0c0c}
+.btn-s{background:#1e1e1e;color:var(--text)}
+.btn-g{background:transparent;color:#666;border:1px solid #2a2a2a}
+.btn-sm{padding:6px 12px;font-size:11px}
+.btn-full{width:100%}
+.btn-cancel{background:#1a1a1a;color:#888;border:1px solid #2a2a2a;border-radius:8px;padding:13px 18px;cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;font-size:14px;width:100%;margin-top:10px;display:block}
+
+/* Inputs */
+.inp{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:12px 14px;color:var(--text);width:100%;font-size:15px;font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none}
+.inp::placeholder{color:#444}
+textarea.inp{resize:vertical;line-height:1.4}
+select.inp{color:var(--text)}
+.fav-row{display:flex;justify-content:space-between;align-items:center;background:#1a1a1a;border:1px solid #242424;border-radius:8px;padding:10px 12px;margin-bottom:6px}
+.fav-main{font-size:13px;color:#e0ddd8}.fav-sub{font-size:11px;color:#555;margin-top:2px}
+
+/* Meal slots */
+.slot-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.slot-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:#444}
+.slot-title.filled{color:var(--accent)}
+.log-item{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-top:1px solid var(--border)}
+.log-name{display:flex;align-items:center;gap:6px;font-size:14px;color:#e0ddd8}
+.log-portion{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--accent);margin-top:2px;padding-left:22px}
+.rm-btn{background:none;border:none;color:#2e2e2e;cursor:pointer;font-size:22px;line-height:1;padding:0;flex-shrink:0}
+
+/* Portion picker */
+.p-confirmed{display:flex;align-items:center;gap:10px;background:#1a1a1a;border-radius:8px;padding:12px;margin-bottom:14px}
+.p-opt{display:flex;justify-content:space-between;align-items:center;background:#1e1e1e;border:1px solid #2a2a2a;border-radius:10px;padding:13px 16px;cursor:pointer;margin-bottom:8px;transition:all .15s}
+.p-opt:active{background:rgba(127,255,212,.1);border-color:rgba(127,255,212,.5)}
+.p-lbl{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--accent);letter-spacing:1px}
+.p-desc{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* Craving */
+.craving-line{font-size:13px;color:#666;line-height:1.9}
+
+/* Weight chart */
+.chart-bars{display:flex;align-items:flex-end;gap:3px;height:80px;margin-bottom:6px}
+.chart-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.chart-val{font-size:9px;color:#333}
+.chart-val.cur{color:var(--accent)}
+.chart-bar{width:100%;background:#222;border-radius:3px 3px 0 0}
+.chart-bar.cur{background:var(--accent)}
+.chart-dates{display:flex;justify-content:space-around;font-size:9px;color:#333}
+
+/* Guide */
+.pg-row{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:center}
+.pg-icon{font-size:24px}
+.pg-name{font-size:13px;color:var(--text);font-weight:500}
+.pg-desc{font-size:12px;color:var(--muted)}
+.gi-title{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;margin-bottom:6px}
+.gi-item{font-size:12px;color:#555;padding-left:8px;margin-bottom:3px}
+
+/* Cuisine grid */
+.cuisine-btn{background:#141414;color:#888;border:1px solid var(--border);border-radius:10px;padding:12px 8px;cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all .15s}
+.cuisine-btn.active{background:var(--accent);color:#0c0c0c;border-color:var(--accent)}
+
+/* EATS */
+.resto-hdr{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--accent);display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;padding:4px 0}
+.resto-arrow{font-size:12px;color:#444;margin-left:auto;transition:transform .2s;display:inline-block}
+.resto-arrow.open{transform:rotate(90deg)}
+.eats-item{background:#1a1a1a;border:1px solid transparent;border-radius:8px;padding:10px 12px;cursor:pointer;margin-bottom:6px;transition:all .15s}
+.eats-item:active,.eats-item.sel{background:rgba(127,255,212,.08);border-color:rgba(127,255,212,.35)}
+.eats-name{font-size:13px;color:#e0ddd8;font-weight:500}
+.eats-desc{font-size:11px;color:#555;margin-top:2px;line-height:1.4}
+.sec-lbl{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:#555;margin:10px 0 6px}
+
+/* Workout */
+.wt-card{display:flex;justify-content:space-between;align-items:center}
+.wt-type{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent)}
+.wt-parts{font-family:'Bebas Neue',sans-serif;font-size:11px;color:var(--accent);letter-spacing:1px}
+.wt-notes{font-size:12px;color:#666}
+.wt-date{font-size:10px;color:#333;margin-top:2px}
+.wt-dur{font-family:'Bebas Neue',sans-serif;font-size:24px}
+.wt-dur span{font-size:11px;color:#444}
+.wtype-btns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+
+/* Strategy */
+.str-row{padding:10px 0;border-bottom:1px solid var(--border)}
+.str-key{font-size:13px;color:var(--text);font-weight:500}
+.str-val{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* Mode cards */
+.mode-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer}
+.mode-card.sel{border-color:var(--accent)}
+.mc-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px}
+.mc-sub{font-size:12px;color:#666;margin-top:3px}
+.mc-det{font-size:11px;color:#444;margin-top:5px}
+
+/* Modal */
+.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.93);display:flex;align-items:flex-end;justify-content:center;z-index:200}
+.overlay.off{display:none!important}
+.sheet{background:#141414;border-radius:16px 16px 0 0;padding:24px;width:100%;max-width:430px;max-height:88vh;overflow-y:auto;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+.sheet-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.sheet-title{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--text)}
+.sheet-x{background:none;border:none;color:#666;font-size:32px;cursor:pointer;line-height:1;padding:0 4px}
+
+/* Install hint */
+#install-hint{background:#181818;border:1px solid #2a2a2a;border-radius:10px;padding:12px 14px;margin:12px 20px 0;font-size:12px;color:#666;line-height:1.6;display:flex;gap:10px;align-items:flex-start}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div id="hdr">
+    <div class="hdr-row">
+      <div>
+        <div id="mode-pill" onclick="openModal('mode-modal')">
+          <div id="mode-dot"></div>
+          <span id="mode-lbl">SLOW BURN</span>
+          <span style="font-size:10px;color:#444;margin-left:2px">▾</span>
+        </div>
+        <div id="app-title">FUEL</div>
+        <div id="app-sub">Steady. Sustainable. No fuss.</div>
+      </div>
+      <div id="wt-badge" onclick="openWeightModal()">
+        <div id="wt-val">—</div>
+        <div id="wt-lbl">LBS · TAP</div>
+      </div>
+    </div>
+    <div id="jump-banner">
+      <span id="jump-day-txt">DAY 1 OF 7</span>
+      <div id="jump-dots"></div>
+    </div>
+  </div>
+
+  <!-- INSTALL HINT -->
+  <div id="install-hint">
+    <span style="font-size:18px;flex-shrink:0">📱</span>
+    <span>To install: tap <strong>Share</strong> in Safari → <strong>"Add to Home Screen"</strong></span>
+    <button onclick="dismissInstall()" style="background:none;border:none;color:#444;cursor:pointer;font-size:20px;margin-left:auto;flex-shrink:0">×</button>
+  </div>
+
+  <!-- TAB BAR -->
+  <div id="tab-bar">
+    <button class="tb active" onclick="switchTab('today')">TODAY</button>
+    <button class="tb" onclick="switchTab('eats')">EATS</button>
+    <button class="tb" id="guide-tb" onclick="switchTab('guide')">GUIDE</button>
+    <button class="tb" onclick="switchTab('body')">BODY</button>
+    <button class="tb" onclick="switchTab('train')">TRAIN</button>
+    <button class="tb" onclick="switchTab('custom')">CUSTOM</button>
+  </div>
+
+  <!-- TODAY TAB -->
+  <div id="tab-today" class="sec">
+    <div id="meal-slots"></div>
+    <div class="card" style="border-color:rgba(127,255,212,.15)">
+      <div class="lbl">CRAVING CHECK</div>
+      <div class="craving-line">💧 Drink water first<br>⏱ Wait 15 minutes<br>Still hungry? <span style="color:var(--accent);font-weight:500">Protein only.</span></div>
+    </div>
+  </div>
+
+  <!-- EATS TAB -->
+  <div id="tab-eats" class="sec" style="display:none">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">
+      Logging to: <span id="eats-slot-name" style="color:var(--accent);font-family:'Bebas Neue',sans-serif;letter-spacing:1px">MEAL 1</span>
+      <span onclick="openModal('slot-modal')" style="color:#444;font-size:11px;margin-left:8px;cursor:pointer;text-decoration:underline">change</span>
+    </div>
+    <div id="eats-list"></div>
+  </div>
+
+  <!-- GUIDE TAB -->
+  <div id="tab-guide" class="sec" style="display:none">
+    <div id="guide-content"></div>
+  </div>
+
+  <!-- BODY TAB -->
+  <div id="tab-body" class="sec" style="display:none">
+    <div class="card">
+      <div class="card-row" style="margin-bottom:14px">
+        <div class="lbl" style="margin-bottom:0">WEIGHT TREND</div>
+        <button class="btn btn-s btn-sm" onclick="openWeightModal()">+ LOG</button>
+      </div>
+      <div id="wt-empty" style="color:#444;font-size:13px">No weight logged yet.</div>
+      <div id="wt-chart" style="display:none">
+        <div class="chart-bars" id="chart-bars"></div>
+        <div class="chart-dates" id="chart-dates"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="lbl">GOAL</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="text-align:center"><div id="goal-now" style="font-family:'Bebas Neue',sans-serif;font-size:42px;line-height:1">—</div><div style="font-size:9px;color:#444;letter-spacing:1px">NOW</div></div>
+        <div style="color:#2a2a2a;font-size:22px">▶</div>
+        <div style="text-align:center"><div id="goal-target" style="font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--accent);line-height:1">205</div><div style="font-size:9px;color:#444;letter-spacing:1px">TARGET</div></div>
+      </div>
+      <div style="height:5px;background:#1e1e1e;border-radius:3px"><div id="goal-bar" style="height:100%;width:5%;background:var(--accent);border-radius:3px;transition:width .8s"></div></div>
+      <div id="goal-note" style="font-size:12px;color:#555;margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <div class="lbl">THE APPROACH</div>
+      <div class="str-row"><div class="str-key">Protein first</div><div class="str-val">Protects muscle. Non-negotiable at 60.</div></div>
+      <div class="str-row"><div class="str-key">No measuring</div><div class="str-val">Palm + fist portions. Sustainable forever.</div></div>
+      <div class="str-row"><div class="str-key">Slow loss wins</div><div class="str-val">0.5–1 lb/week keeps every ounce of muscle.</div></div>
+      <div class="str-row" style="border-bottom:none"><div class="str-key">Resets exist</div><div class="str-val">7-day or 1-day resets break plateaus fast.</div></div>
+    </div>
+    <div class="card">
+      <div class="lbl">YOUR DATA</div>
+      <div style="font-size:12px;color:#555;margin-bottom:12px;line-height:1.5">Back up your logs anytime. If you reinstall, restore from backup.</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-s btn-full" onclick="exportData()">⬇ BACKUP</button>
+        <button class="btn btn-g btn-full" onclick="document.getElementById('import-file').click()">⬆ RESTORE</button>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+    </div>
+  </div>
+
+  <!-- TRAIN TAB -->
+  <div id="tab-train" class="sec" style="display:none">
+    <div class="card-row" style="margin-bottom:12px">
+      <div class="lbl" style="margin-bottom:0">SESSIONS</div>
+      <button class="btn btn-s btn-sm" onclick="openWorkoutModal()">+ LOG</button>
+    </div>
+    <div id="wk-empty" class="card" style="color:#444;font-size:13px">No sessions yet. Go lift.</div>
+    <div id="wk-list"></div>
+    <div id="wk-stats" class="card" style="display:none">
+      <div style="display:flex;gap:24px">
+        <div><div id="stat-sess" style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--accent)">0</div><div style="font-size:9px;color:#444;letter-spacing:1px">SESSIONS THIS WEEK</div></div>
+        <div><div id="stat-min" style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:#888">0</div><div style="font-size:9px;color:#444;letter-spacing:1px">MINUTES</div></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- CUSTOMIZE TAB -->
+  <div id="tab-custom" class="sec" style="display:none">
+    <div class="card">
+      <div class="lbl">APP SETTINGS</div>
+      <div style="font-size:12px;color:#666;margin-bottom:12px;line-height:1.5">Adjust the app without touching code. Changes save on this device.</div>
+      <div class="lbl">APP TITLE</div>
+      <input class="inp" id="set-title" placeholder="FUEL" style="margin-bottom:10px">
+      <div class="lbl">SUBTITLE</div>
+      <input class="inp" id="set-subtitle" placeholder="Steady. Sustainable. No fuss." style="margin-bottom:10px">
+      <div class="lbl">TARGET WEIGHT</div>
+      <input class="inp" id="set-target" type="number" inputmode="decimal" placeholder="205" style="margin-bottom:14px">
+      <button class="btn btn-p btn-full" onclick="saveSettings()">SAVE SETTINGS</button>
+    </div>
+
+    <div class="card">
+      <div class="lbl">QUICK ADD FAVORITES</div>
+      <div style="font-size:12px;color:#666;margin-bottom:12px;line-height:1.5">These appear at the top of Today for one-tap logging.</div>
+      <div id="fav-list" style="margin-bottom:12px"></div>
+      <input class="inp" id="fav-name" placeholder="Favorite name, e.g. Protein coffee" style="margin-bottom:8px">
+      <input class="inp" id="fav-portion" placeholder="Portion, e.g. 1 cup or 2 palms" style="margin-bottom:8px">
+      <select class="inp" id="fav-slot" style="margin-bottom:8px">
+        <option>Meal 1</option><option>Meal 2</option><option>Meal 3</option><option>Snack</option>
+      </select>
+      <button class="btn btn-s btn-full" onclick="addFavorite()">+ ADD FAVORITE</button>
+    </div>
+
+    <div class="card">
+      <div class="lbl">COACH NOTE</div>
+      <textarea class="inp" id="coach-note-input" placeholder="Example: Protein first. No hero sets today." style="min-height:80px;margin-bottom:10px"></textarea>
+      <button class="btn btn-s btn-full" onclick="saveCoachNote()">SAVE TODAY NOTE</button>
+    </div>
+
+    <div class="card">
+      <div class="lbl">RESET OPTIONS</div>
+      <button class="btn btn-g btn-full" onclick="clearTodayLogs()" style="margin-bottom:8px">CLEAR TODAY FOOD LOGS</button>
+      <button class="btn btn-g btn-full" onclick="resetCustomOnly()">RESET CUSTOM SETTINGS ONLY</button>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<!-- ══════════ MODALS ══════════ -->
+
+<!-- Mode modal -->
+<div class="overlay off" id="mode-modal">
+  <div class="sheet">
+    <div class="sheet-hdr">
+      <div class="sheet-title">CHOOSE MODE</div>
+      <button class="sheet-x" onclick="closeModal('mode-modal')">×</button>
+    </div>
+    <div class="mode-card" id="mc-slow" onclick="setMode('slow')">
+      <div class="mc-title" style="color:#7FFFD4">SLOW BURN</div>
+      <div class="mc-sub">Steady. Sustainable. No fuss.</div>
+      <div class="mc-det">No calorie counting · food guide · palm portions · forever</div>
+    </div>
+    <div class="mode-card" id="mc-jump" onclick="setMode('jump')">
+      <div class="mc-title" style="color:#FFD447">7-DAY RESET</div>
+      <div class="mc-sub">Low carb. Tighten. Momentum.</div>
+      <div class="mc-det">Low carb · palm portions · 7 days · drops bloat fast</div>
+    </div>
+    <div class="mode-card" id="mc-oneday" onclick="setMode('oneday')">
+      <div class="mc-title" style="color:#FF8F7F">1-DAY RESET</div>
+      <div class="mc-sub">One clean day. Back on track.</div>
+      <div class="mc-det">Protein first all day. Reset and keep moving.</div>
+    </div>
+    <button class="btn-cancel" onclick="closeModal('mode-modal')">CANCEL</button>
+  </div>
+</div>
+
+<!-- Weight modal -->
+<div class="overlay off" id="weight-modal">
+  <div class="sheet">
+    <div class="sheet-hdr">
+      <div class="sheet-title">LOG WEIGHT</div>
+      <button class="sheet-x" onclick="closeModal('weight-modal')">×</button>
+    </div>
+    <div class="lbl">DAY</div>
+    <div id="wt-day-btns" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px"></div>
+    <input class="inp" id="wt-input" type="number" inputmode="decimal" placeholder="215.0" style="font-family:'Bebas Neue',sans-serif;font-size:36px;text-align:center;margin-bottom:8px">
+    <div style="font-size:11px;color:#444;text-align:center;letter-spacing:1px;margin-bottom:16px">MORNING · SAME CONDITIONS · LBS</div>
+    <button class="btn btn-p btn-full" onclick="saveWeight()">SAVE</button>
+    <button class="btn-cancel" onclick="closeModal('weight-modal')">CANCEL</button>
+  </div>
+</div>
+
+<!-- Workout modal -->
+<div class="overlay off" id="workout-modal">
+  <div class="sheet">
+    <div class="sheet-hdr">
+      <div class="sheet-title">LOG SESSION</div>
+      <button class="sheet-x" onclick="closeModal('workout-modal')">×</button>
+    </div>
+    <div class="lbl">DAY</div>
+    <div id="wk-day-btns" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px"></div>
+    <div class="lbl">TYPE</div>
+    <div class="wtype-btns" id="wtype-btns"></div>
+    <div id="body-parts-sec" style="display:none">
+      <div class="lbl">BODY PARTS HIT</div>
+      <div class="wtype-btns" id="bpart-btns"></div>
+    </div>
+    <div class="lbl">DURATION (MIN)</div>
+    <input class="inp" id="wk-dur" type="number" inputmode="numeric" placeholder="60" style="margin-bottom:12px">
+    <div class="lbl">NOTES</div>
+    <input class="inp" id="wk-notes" placeholder="Optional..." style="margin-bottom:16px">
+    <button class="btn btn-p btn-full" onclick="saveWorkout()">SAVE SESSION</button>
+    <button class="btn-cancel" onclick="closeModal('workout-modal')">CANCEL</button>
+  </div>
+</div>
+
+<!-- Slot picker modal -->
+<div class="overlay off" id="slot-modal">
+  <div class="sheet">
+    <div class="sheet-hdr">
+      <div class="sheet-title">LOG TO WHICH MEAL?</div>
+      <button class="sheet-x" onclick="closeModal('slot-modal')">×</button>
+    </div>
+    <div id="slot-btns" style="display:flex;flex-direction:column;gap:8px"></div>
+    <button class="btn-cancel" onclick="closeModal('slot-modal')">CANCEL</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════
+const SK = 'fuel_v6';
+
+const MODES = {
+  slow:   { color:'#7FFFD4', label:'SLOW BURN',   sub:'Steady. Sustainable. No fuss.' },
+  jump:   { color:'#FFD447', label:'7-DAY RESET',  sub:'Low carb. Tighten. Momentum.' },
+  oneday: { color:'#FF8F7F', label:'1-DAY RESET',  sub:'One clean day. Back on track.' },
+};
+
+const SLOTS = ['Meal 1','Meal 2','Meal 3','Snack'];
+const WTYPES = ['MaxPro','Incline Push-Ups','Cardio','Bowflex','Walk','Mobility'];
+const BPARTS = ['Chest','Shoulders','Arms','Back','Legs','Waist'];
+
+const FOOD_TYPES = {
+  protein:{ kw:['chicken','steak','beef','fish','salmon','tuna','turkey','pork','shrimp','egg','yogurt','cottage','shake','protein','lamb','bison','ham','bacon','jerky','whey','oikos','skyr'], icon:'✋', opts:[{l:'½ palm',d:'~3 oz · snack'},{l:'1 palm',d:'~5–6 oz · light meal'},{l:'2 palms',d:'~10–12 oz · full meal'},{l:'3 palms',d:'~15 oz · big meal'}]},
+  veggie: { kw:['salad','broccoli','spinach','kale','pepper','zucchini','cucumber','lettuce','tomato','asparagus','cauliflower','celery','mushroom','onion','cabbage','greens','vegetable','veggie','arugula','carrot'], icon:'✊', opts:[{l:'1 fist',d:'Side portion'},{l:'2 fists',d:'Good serving'},{l:'3+ fists',d:'Load it up — no limit'}]},
+  carb:   { kw:['rice','potato','oat','oatmeal','bread','pasta','tortilla','wrap','quinoa','beans','lentil','corn','pita','noodle','chips','cracker','cereal','bagel','muffin'], icon:'🤜', opts:[{l:'½ fist',d:'Small portion'},{l:'1 fist',d:'Moderate'},{l:'2 fists',d:'Larger serving'}]},
+  fat:    { kw:['avocado','guac','almond','nut','peanut','butter','olive oil','cheese','oil','dressing','mayo','hummus','seed','walnut','cashew','coconut'], icon:'🤏', opts:[{l:'Thumb',d:'~1 tbsp · oils/butters'},{l:'Small handful',d:'~1 oz · nuts'},{l:'1 handful',d:'~2 oz · larger'}]},
+  liquid: { kw:['soup','broth','smoothie','shake','juice','milk','coffee','tea','stew','chili','chowder'], icon:'🥤', opts:[{l:'½ cup',d:'Small glass'},{l:'1 cup',d:'Standard'},{l:'1.5 cups',d:'Large bowl'},{l:'2 cups',d:'Big mug/bowl'}]},
+  fruit:  { kw:['apple','banana','orange','berr','strawberr','blueberr','grape','melon','mango','peach','pear','plum','pineapple','fruit','cherry'], icon:'✊', opts:[{l:'½ fist',d:'Small piece'},{l:'1 fist',d:'Medium piece'},{l:'2 fists',d:'Large serving'}]},
+  other:  { kw:[], icon:'🍽️', opts:[{l:'Small',d:'Light portion'},{l:'Medium',d:'Normal serving'},{l:'Large',d:'Big serving'}]},
+};
+
+const JUMP_RULES = ['Protein first, always.','Low carb — skip bread, tortillas, rice, pasta, chips, sweets.','Night snack = one planned item only.','Water first when craving hits. Wait 15 min. Still hungry? Protein only.','3 lift days. Short walks. No hero sets.'];
+
+const JUMP_MENU = {
+  'Meal 1':['Protein coffee + chicken','3 eggs + chicken','Oikos PRO + almonds'],
+  'Meal 2':['Protein shake','Greek yogurt','Chicken','Almonds'],
+  'Meal 3':['Chicken + vegetables','Lean burger lettuce wrap','Double chicken fajitas (no tortillas/rice/beans)'],
+  'Snack': ['Almonds','Greek yogurt','Protein shake','Cottage cheese'],
+};
+
+const PORTIONS_GUIDE = [
+  {icon:'✋',name:'Protein',desc:'2 palms at meals · 1 palm for snacks'},
+  {icon:'✊',name:'Veggies',desc:'1–2 fists, no real limit on greens'},
+  {icon:'🤏',name:'Almonds / nuts',desc:'1 small handful'},
+  {icon:'👌',name:'Cheese / Guac / Dressing',desc:'Moderate — not piled on'},
+];
+
+// HOME items
+const HOME_ITEMS = [
+  { sec:'☀️ MORNING', items:[
+    {name:'Protein Smoothie',desc:'6oz almond milk · Body Fortress whey · spoonful Oikos PRO · spinach · MaraNatha PB · frozen strawberries · ice · Ninja blend',ft:'protein',icon:'✋',portion:'2 palms'},
+    {name:'Oikos PRO Vanilla',desc:'23g protein · 0g added sugar · straight from the tub',ft:'protein',icon:'✋',portion:'1 palm'},
+    {name:'3 Eggs',desc:'Any style · go-to morning protein',ft:'protein',icon:'✋',portion:'1 palm'},
+    {name:'Eggs + Roasted Chicken',desc:'2–3 eggs + bone-in roasted chicken breast · power meal',ft:'protein',icon:'✋',portion:'2 palms'},
+  ]},
+  { sec:'☕ DRINKS', items:[
+    {name:'Evening Cold Brew',desc:'Cold brew + Nutpods Toasted Marshmallow + Lucerne Salted Caramel · no sugar',ft:'liquid',icon:'🥤',portion:'1 cup'},
+    {name:'Black Coffee',desc:'Plain · zero everything',ft:'liquid',icon:'🥤',portion:'1 cup'},
+  ]},
+  { sec:'🍽️ MEALS', items:[
+    {name:'Roasted Chicken Breast',desc:'Bone-in · raised without antibiotics · clean protein',ft:'protein',icon:'✋',portion:'2 palms'},
+    {name:'Chicken + Oikos Bowl',desc:'Roasted chicken · Oikos PRO on the side · high-protein meal',ft:'protein',icon:'✋',portion:'2 palms'},
+    {name:'Hero Bread Sandwich',desc:'1g net carb · 6g protein per slice · lean protein sandwich',ft:'carb',icon:'🤜',portion:'1 fist'},
+  ]},
+  { sec:'🌙 SNACKS', items:[
+    {name:'Cottage Cheese + Pineapple',desc:'Cottage cheese · zero sugar canned pineapple · sweet + protein',ft:'protein',icon:'✋',portion:'1 palm'},
+    {name:'Oikos PRO + Almonds',desc:'23g protein yogurt · small handful almonds',ft:'protein',icon:'✋',portion:'1 palm'},
+    {name:'PB on Hero Bread',desc:'MaraNatha crunchy PB · Hero bread · 1 slice only',ft:'fat',icon:'🤏',portion:'1 handful'},
+    {name:'Almonds',desc:'Small handful · clean fat + protein',ft:'fat',icon:'🤏',portion:'Small handful'},
+  ]},
+];
+
+// Restaurants
+const RESTOS = [
+  {id:'chipotle',name:'Chipotle',icon:'🌯',items:[
+    {name:'Steak Protein Bowl',desc:'Small · steak · no rice · protein-focused',ft:'protein',icon:'✋',portion:'2 palms'},
+    {name:'Honey Chicken Protein Bowl',desc:'Small · honey chicken · no rice',ft:'protein',icon:'✋',portion:'2 palms'},
+    {name:'Crispy Tacos (3)',desc:'Steak or chicken · lettuce, tomato, a little cheese',ft:'protein',icon:'✋',portion:'2 palms'},
+  ]},
+  {id:'tacodeli',name:'Taco Deli',icon:'🌮',items:[
+    {name:'Chicken Frontera',desc:'On corn tortilla · grilled chicken, salsa',ft:'protein',icon:'✋',portion:'2 palms'},
+    {name:'Space Cowboy',desc:'On corn tortilla',ft:'protein',icon:'✋',portion:'2 palms'},
+    {name:'Barbara',desc:'On corn · plain, no extras',ft:'protein',icon:'✋',portion:'1 palm'},
+  ]},
+  {id:'chickfila',name:'Chick-fil-A',icon:'🐔',items:[
+    {name:'Grilled Chicken Nuggets',desc:'Clean protein · no breading',ft:'protein',icon:'✋',portion:'2 palms'},
+    {name:'Chicken Noodle Soup',desc:'Cup · light carbs',ft:'liquid',icon:'🥤',portion:'1 cup'},
+    {name:'Diet Lemonade',desc:'Large · zero sugar',ft:'liquid',icon:'🥤',portion:'2 cups'},
+  ]},
+  {id:'starbucks',name:'Starbucks',icon:'☕',items:[
+    {name:'Iced Cold Brew',desc:'Salted caramel protein foam · no other sweeteners',ft:'liquid',icon:'🥤',portion:'1 cup'},
+    {name:'Tomato Mozzarella on Focaccia',desc:'Moderate carbs · watch portion',ft:'carb',icon:'🤜',portion:'1 fist'},
+    {name:'Egg Bake – Bacon',desc:'High protein · good morning option',ft:'protein',icon:'✋',portion:'1 palm'},
+  ]},
+  {id:'pollorio',name:'Pollo Rico',icon:'🍗',items:[
+    {name:'Half Chicken',desc:'Rotisserie · clean protein',ft:'protein',icon:'✋',portion:'2 palms'},
+    {name:'Charro Beans',desc:'Side · moderate carbs / protein',ft:'carb',icon:'🤜',portion:'1 fist'},
+  ]},
+  {id:'catrina',name:'Tacos La Catrina',icon:'🌮',items:[
+    {name:'Birria Roast Tacos (3)',desc:'On corn · slow-roasted beef · consommé for dipping',ft:'protein',icon:'✋',portion:'2 palms'},
+  ]},
+  {id:'fez',name:'Fez – Fresh Mediterranean',icon:'🫓',items:[
+    {name:'Lamb & Beef Wrap',desc:'Grilled pita · beet hummus · cucumber, tomato, onion · lettuce · yogurt sauce · harissa',ft:'protein',icon:'✋',portion:'2 palms'},
+  ]},
+  {id:'souppeddler',name:'The Soup Peddler',icon:'🥣',items:[
+    {name:'Turkey Cilantro Pesto Pepper Jack Grilled Cheese',desc:'Solid protein · moderate carbs',ft:'protein',icon:'✋',portion:'2 palms'},
+    {name:'Mulligatawny Soup',desc:'Warm · lentil/chicken base',ft:'liquid',icon:'🥤',portion:'1.5 cups'},
+    {name:'Green Detox Soup',desc:'Light · veggie-forward',ft:'liquid',icon:'🥤',portion:'1.5 cups'},
+  ]},
+];
+
+// Cuisine guide
+const CUISINES = [
+  {id:'mexican',label:'Mexican',icon:'🌮',order:['Grilled chicken, steak, or carnitas — extra protein','Fajitas without tortillas, rice, or beans','Taco salad bowl — skip the shell','Lettuce-wrapped tacos','Birria on corn (3 max)'],skip:['Tortillas, rice, refried beans','Chips as a meal','Burritos'],tip:'Corn over flour if you do tortillas. Double protein, hold the rice.'},
+  {id:'burger',label:'Burger',icon:'🍔',order:['Lettuce-wrapped burger','Grilled chicken, no bun','Double patty no bun','Side salad not fries'],skip:['Buns','Fries','Milkshakes','Fried chicken sandwiches'],tip:'"Protein style" = lettuce wrap. Every burger place does it.'},
+  {id:'italian',label:'Italian',icon:'🍝',order:['Grilled salmon or chicken','Chicken piccata or marsala','Shrimp without pasta','Caprese salad'],skip:['Pasta','Bread basket','Alfredo sauces'],tip:'Ask to sub pasta for double veggie. Most kitchens will do it.'},
+  {id:'american',label:'American',icon:'🥩',order:['Steak — sirloin, ribeye, filet','Grilled chicken or salmon','Bunless burger','Wings — grilled not breaded'],skip:['Fry baskets','Sugary BBQ sauces','Mac and cheese'],tip:'Steakhouses are your friend. Double protein, sub fries for salad.'},
+  {id:'asian',label:'Asian',icon:'🍱',order:['Sashimi — pure protein','Grilled teriyaki chicken or salmon','Steamed protein + veg','Edamame','Miso soup'],skip:['White rice','Tempura','Noodle dishes','Sweet sauces'],tip:'Sashimi is the move at sushi. Teriyaki with no rice anywhere else.'},
+  {id:'med',label:'Mediterranean',icon:'🫓',order:['Grilled lamb or chicken kebab','Gyro plate — hold the pita','Greek salad with chicken','Grilled fish'],skip:['Pita stacks','Falafel — fried','Rice-heavy plates'],tip:'Kebab plates are perfect. Ask for salad instead of rice.'},
+  {id:'breakfast',label:'Breakfast',icon:'🍳',order:['Eggs any style — 3 or more','Egg white omelet with veg','Turkey or regular bacon','Smoked salmon','Cottage cheese side'],skip:['Pancakes, waffles, French toast','Hash browns','Bagels and toast'],tip:'Eggs + meat + veg = perfect. Skip everything bread-based.'},
+  {id:'fast',label:'Fast Food',icon:'🥡',order:['Grilled chicken over crispy','Bunless or lettuce-wrapped','Egg + protein breakfast (skip biscuit)','Side salad not fries'],skip:['Crispy / fried everything','Value meals','Desserts'],tip:"Chick-fil-A grilled nuggets are your best friend. Most places have grilled now."},
+  {id:'coffee',label:'Coffee Shop',icon:'☕',order:['Cold brew or black coffee','Protein foam cold brew','Egg bites or egg bakes','Cheese & meat snack boxes'],skip:['Frappuccinos — liquid sugar','Muffins, scones','Sweetened lattes'],tip:'Ask for sugar-free syrups. Protein foam adds protein without sugar.'},
+  {id:'indian',label:'Indian',icon:'🍛',order:['Tandoori chicken — perfect','Chicken tikka (not masala)','Seekh kebab','Dal lentil soup','Raita'],skip:['Naan bread','Butter chicken — heavy cream','Biryani','Samosas — fried'],tip:'Tandoori anything is the best call. Chargrilled, lean, high protein.'},
+  {id:'seafood',label:'Seafood',icon:'🐟',order:['Grilled salmon','Shrimp — grilled or steamed','Blackened fish','Oysters as starter','Steamed lobster or crab'],skip:['Fish and chips','Fried baskets','Tartar sauce'],tip:'Blackened or grilled over fried, always. Sub fries for steamed veg.'},
+  {id:'steakhouse',label:'Steakhouse',icon:'🥩',order:['Sirloin, filet, or ribeye','Add shrimp for more protein','Caesar salad starter','Grilled asparagus or broccoli'],skip:['Loaded baked potato','Bread rolls','Creamed spinach'],tip:'Steakhouse = easiest restaurant for your goals. Protein + veg, done.'},
+];
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+function loadData() {
+  try {
+    const r = localStorage.getItem(SK);
+    if (r) return JSON.parse(r);
+    // migrate old keys
+    for (const k of ['fuel_v5','fuel_v4','fuel_v3','fuel_v2']) {
+      const old = localStorage.getItem(k);
+      if (old) { const p = JSON.parse(old); localStorage.setItem(SK, JSON.stringify(p)); return p; }
+    }
+  } catch {}
+  return { mode:'slow', logs:[], weights:[], workouts:[], jumpStart:null, installDismissed:false, settings:{title:'FUEL', subtitle:''}, favorites:[], coachNotes:[] };
+}
+function saveData() { try { localStorage.setItem(SK, JSON.stringify(D)); } catch {} }
+
+let D = loadData();
+let activeSlot   = null;
+let stage        = 'type'; // 'type' | 'portion'
+let pendingFood  = null;
+let quickPick    = null;
+let eatsSlot     = 'Meal 1';
+let openRestos   = { home: false };
+let selRestoItem = null;
+let selWType     = 'MaxPro';
+let selBParts    = [];
+let selWDay      = today();
+let selWtDay     = today();
+let activeCuisine = null;
+
+function ensureDataShape(){
+  D.settings = D.settings || {title:'FUEL', subtitle:''};
+  if (!D.settings.title) D.settings.title = 'FUEL';
+  D.favorites = D.favorites || [];
+  D.coachNotes = D.coachNotes || [];
+  if (!D.settings.targetWeight) D.settings.targetWeight = 205;
+}
+ensureDataShape();
+
+// ══════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmtDate(d) { return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function daysBetween(a,b) { return Math.floor((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000); }
+function acc() { return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(); }
+
+function detectFoodType(text) {
+  const t = text.toLowerCase();
+  for (const [type, data] of Object.entries(FOOD_TYPES)) {
+    if (type === 'other') continue;
+    if (data.kw.some(k => t.includes(k))) return type;
+  }
+  return 'other';
+}
+
+function getLast7Days() {
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const iso = d.toISOString().split('T')[0];
+    const label = i===0 ? 'Today' : i===1 ? 'Yesterday' : d.toLocaleDateString('en-US',{weekday:'short'});
+    days.push({ iso, label });
+  }
+  return days;
+}
+
+// ══════════════════════════════════════
+// MODALS
+// ══════════════════════════════════════
+function openModal(id)  { document.getElementById(id).classList.remove('off'); }
+function closeModal(id) { document.getElementById(id).classList.add('off'); }
+
+function dismissInstall() {
+  D.installDismissed = true; saveData();
+  document.getElementById('install-hint').style.display = 'none';
+}
+
+// ══════════════════════════════════════
+// MODE
+// ══════════════════════════════════════
+function applyMode() {
+  const m = MODES[D.mode];
+  document.documentElement.style.setProperty('--accent', m.color);
+  document.getElementById('mode-dot').style.background = m.color;
+  document.getElementById('mode-lbl').textContent = m.label;
+  document.getElementById('app-title').textContent = D.settings?.title || 'FUEL';
+  document.getElementById('app-sub').textContent = D.settings?.subtitle || m.sub;
+  document.getElementById('wt-val').style.color = m.color;
+  ['slow','jump','oneday'].forEach(k => {
+    const el = document.getElementById('mc-'+k);
+    if (el) el.classList.toggle('sel', D.mode===k);
+  });
+  document.getElementById('guide-tb').textContent = D.mode==='jump' ? 'RULES' : 'GUIDE';
+}
+
+function setMode(m) {
+  D.mode = m;
+  if (m==='jump' && (!D.jumpStart || daysBetween(D.jumpStart, today())>=7)) D.jumpStart = today();
+  saveData(); closeModal('mode-modal'); applyMode(); renderHeader(); renderMealSlots(); renderGuide();
+}
+
+// ══════════════════════════════════════
+// HEADER
+// ══════════════════════════════════════
+function renderHeader() {
+  const latest = latestWeight();
+  document.getElementById('wt-val').textContent = latest || '—';
+  const banner = document.getElementById('jump-banner');
+  if (D.mode==='jump' && D.jumpStart) {
+    const day = Math.min(7, daysBetween(D.jumpStart, today())+1);
+    document.getElementById('jump-day-txt').textContent = 'DAY '+day+' OF 7';
+    const dots = document.getElementById('jump-dots');
+    dots.innerHTML = '';
+    for (let i=1;i<=7;i++) {
+      const d=document.createElement('div'); d.className='jdot';
+      if(i<=day) d.style.background=MODES.jump.color;
+      dots.appendChild(d);
+    }
+    banner.style.display='flex';
+  } else { banner.style.display='none'; }
+  if (D.installDismissed || window.navigator.standalone) document.getElementById('install-hint').style.display='none';
+}
+
+// ══════════════════════════════════════
+// TABS
+// ══════════════════════════════════════
+const TABS = ['today','eats','guide','body','train','custom'];
+function switchTab(name) {
+  TABS.forEach(t => { document.getElementById('tab-'+t).style.display = t===name ? '' : 'none'; });
+  document.querySelectorAll('.tb').forEach((b,i) => b.classList.toggle('active', TABS[i]===name));
+  if (name==='body')  renderBody();
+  if (name==='train') renderTrain();
+  if (name==='guide') renderGuide();
+  if (name==='eats')  renderEats();
+  if (name==='custom') renderCustom();
+}
+
+// ══════════════════════════════════════
+// MEAL SLOTS (TODAY)
+// ══════════════════════════════════════
+function renderMealSlots() {
+  const container = document.getElementById('meal-slots');
+  container.innerHTML = '';
+  const todayLogs = D.logs.filter(l => l.date===today());
+
+  if (D.favorites && D.favorites.length) {
+    const favCard=document.createElement('div'); favCard.className='card'; favCard.style.borderColor='rgba(127,255,212,.15)';
+    favCard.innerHTML='<div class="lbl">QUICK ADD</div>';
+    D.favorites.slice(0,8).forEach(f=>{
+      const b=document.createElement('button'); b.className='btn btn-s'; b.style.margin='0 6px 6px 0'; b.textContent=f.name;
+      b.onclick=()=>{ const ft=detectFoodType(f.name); D.logs.push({id:Date.now(),date:today(),slot:f.slot||'Meal 1',text:f.name,portion:f.portion||'1 serving',ft,icon:FOOD_TYPES[ft].icon}); saveData(); renderMealSlots(); };
+      favCard.appendChild(b);
+    });
+    container.appendChild(favCard);
+  }
+
+  const note = latestCoachNote();
+  if (note) {
+    const noteCard=document.createElement('div'); noteCard.className='card'; noteCard.style.borderColor='rgba(255,255,255,.08)';
+    noteCard.innerHTML='<div class="lbl">COACH NOTE</div><div style="font-size:13px;color:#bbb;line-height:1.5">'+escapeHtml(note.text)+'</div>';
+    container.appendChild(noteCard);
+  }
+
+  SLOTS.forEach(slot => {
+    const slotLogs = todayLogs.filter(l => l.slot===slot);
+    const isOpen   = activeSlot===slot;
+    const m        = MODES[D.mode];
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    if (isOpen) card.style.borderColor = m.color+'55';
+
+    // Header
+    const hdr = document.createElement('div');
+    hdr.className = 'slot-hdr';
+    const title = document.createElement('span');
+    title.className = 'slot-title'+(slotLogs.length?' filled':'');
+    title.textContent = slot;
+    const btn = document.createElement('button');
+    if (!isOpen) {
+      btn.className='btn btn-s btn-sm'; btn.textContent='+ LOG';
+      btn.onclick = () => openSlot(slot);
+    } else {
+      btn.className='btn btn-g btn-sm'; btn.textContent='✕ CLOSE';
+      btn.onclick = closeSlot;
+    }
+    hdr.appendChild(title); hdr.appendChild(btn); card.appendChild(hdr);
+
+    // Logged items
+    slotLogs.forEach(l => {
+      const row = document.createElement('div'); row.className='log-item';
+      row.innerHTML = `<div class="log-item-left"><div class="log-name"><span>${l.icon}</span><span>${l.text}</span></div><div class="log-portion" style="color:${m.color}">${l.portion}</div></div>`;
+      const rm = document.createElement('button'); rm.className='rm-btn'; rm.textContent='×';
+      rm.onclick = ()=>{ D.logs=D.logs.filter(x=>x.id!==l.id); saveData(); renderMealSlots(); };
+      row.appendChild(rm); card.appendChild(row);
+    });
+
+    // Open input area
+    if (isOpen) {
+      const area = document.createElement('div'); area.style.marginTop='10px';
+
+      if (stage==='type') {
+        // Jump quick picks
+        if (D.mode==='jump' && JUMP_MENU[slot]) {
+          JUMP_MENU[slot].forEach(opt => {
+            const p = document.createElement('div');
+            p.className = 'eats-item'+(quickPick===opt?' sel':'');
+            p.textContent = opt;
+            p.onclick = () => { quickPick=opt; document.getElementById('food-inp') && (document.getElementById('food-inp').value=opt); renderMealSlots(); };
+            area.appendChild(p);
+          });
+        }
+        const row = document.createElement('div'); row.style.cssText='display:flex;gap:6px;margin:8px 0';
+        const inp = document.createElement('input'); inp.className='inp'; inp.id='food-inp'; inp.type='text';
+        inp.placeholder='What did you eat? (e.g. chicken...)'; inp.style.fontSize='14px';
+        inp.onkeydown = e => { if(e.key==='Enter') confirmFood(); };
+        if (quickPick) inp.value = quickPick;
+        const go = document.createElement('button'); go.className='btn btn-p'; go.textContent='NEXT →';
+        go.onclick = confirmFood;
+        row.appendChild(inp); row.appendChild(go); area.appendChild(row);
+        setTimeout(()=>{ const i=document.getElementById('food-inp'); if(i && !quickPick) i.focus(); }, 80);
+
+      } else if (stage==='portion' && pendingFood) {
+        const ft = FOOD_TYPES[pendingFood.ft];
+        const banner = document.createElement('div'); banner.className='p-confirmed';
+        banner.innerHTML = `<span style="font-size:22px">${ft.icon}</span><div><div style="font-size:14px;font-weight:500">${pendingFood.text}</div><div style="font-size:11px;color:var(--muted);letter-spacing:1px">HOW MUCH?</div></div>`;
+        area.appendChild(banner);
+        ft.opts.forEach(opt => {
+          const b = document.createElement('div'); b.className='p-opt';
+          b.innerHTML = `<div><div class="p-lbl" style="color:${m.color}">${opt.l}</div><div class="p-desc">${opt.d}</div></div><span style="font-size:20px">${ft.icon}</span>`;
+          b.onclick = () => confirmPortion(opt.l);
+          area.appendChild(b);
+        });
+        const back = document.createElement('button'); back.className='btn btn-g btn-full'; back.style.fontSize='11px'; back.textContent='← CHANGE FOOD';
+        back.onclick = () => { stage='type'; pendingFood=null; renderMealSlots(); };
+        area.appendChild(back);
+      }
+      card.appendChild(area);
+    }
+    container.appendChild(card);
+  });
+}
+
+function openSlot(slot) { activeSlot=slot; stage='type'; pendingFood=null; quickPick=null; renderMealSlots(); }
+function closeSlot()    { activeSlot=null; stage='type'; pendingFood=null; quickPick=null; renderMealSlots(); }
+
+function confirmFood() {
+  const inp = document.getElementById('food-inp');
+  const text = inp ? inp.value.trim() : '';
+  if (!text) return;
+  pendingFood = { text, ft: detectFoodType(text) };
+  stage = 'portion'; renderMealSlots();
+}
+
+function confirmPortion(portionLabel) {
+  if (!pendingFood || !activeSlot) return;
+  const ft = FOOD_TYPES[pendingFood.ft];
+  D.logs.push({ id:Date.now(), date:today(), slot:activeSlot, text:pendingFood.text, portion:portionLabel, ft:pendingFood.ft, icon:ft.icon });
+  saveData(); stage='type'; pendingFood=null; quickPick=null; renderMealSlots();
+}
+
+// ══════════════════════════════════════
+// EATS TAB
+// ══════════════════════════════════════
+function renderEats() {
+  document.getElementById('eats-slot-name').textContent = eatsSlot.toUpperCase();
+  const list = document.getElementById('eats-list'); list.innerHTML='';
+
+  // HOME
+  const homeCard = document.createElement('div'); homeCard.className='card'; homeCard.style.marginBottom='10px';
+  const homeHdr = document.createElement('div'); homeHdr.className='resto-hdr';
+  homeHdr.innerHTML = `<span>🏠</span><span>HOME</span><span class="resto-arrow${openRestos.home?' open':''}">▶</span>`;
+  homeHdr.onclick = () => { openRestos.home=!openRestos.home; renderEats(); };
+  homeCard.appendChild(homeHdr);
+  if (openRestos.home) {
+    HOME_ITEMS.forEach(section => {
+      const sl=document.createElement('div'); sl.className='sec-lbl'; sl.textContent=section.sec; homeCard.appendChild(sl);
+      section.items.forEach((item,idx)=>{
+        const key='home_'+idx+'_'+section.sec;
+        const d=document.createElement('div'); d.className='eats-item'+(selRestoItem===key?' sel':'');
+        d.innerHTML=`<div class="eats-name">${item.name}</div><div class="eats-desc">${item.desc}</div>`;
+        d.onclick=()=>logEatsItem(item,key,'Home'); homeCard.appendChild(d);
+      });
+    });
+  }
+  list.appendChild(homeCard);
+
+  // Restaurants
+  RESTOS.forEach(r => {
+    const card=document.createElement('div'); card.className='card'; card.style.marginBottom='10px';
+    const hdr=document.createElement('div'); hdr.className='resto-hdr';
+    hdr.innerHTML=`<span>${r.icon}</span><span>${r.name}</span><span class="resto-arrow${openRestos[r.id]?' open':''}">▶</span>`;
+    hdr.onclick=()=>{ openRestos[r.id]=!openRestos[r.id]; renderEats(); };
+    card.appendChild(hdr);
+    if (openRestos[r.id]) {
+      r.items.forEach((item,idx)=>{
+        const key=r.id+'_'+idx;
+        const d=document.createElement('div'); d.className='eats-item'+(selRestoItem===key?' sel':'');
+        d.innerHTML=`<div class="eats-name">${item.name}</div><div class="eats-desc">${item.desc}</div>`;
+        d.onclick=()=>logEatsItem(item,key,r.name); card.appendChild(d);
+      });
+    }
+    list.appendChild(card);
+  });
+
+  // Slot picker
+  const sbtns=document.getElementById('slot-btns'); if(!sbtns) return;
+  sbtns.innerHTML='';
+  SLOTS.forEach(s=>{
+    const b=document.createElement('button');
+    b.className='btn btn-full '+(eatsSlot===s?'btn-p':'btn-s');
+    b.textContent=s; b.style.marginBottom='4px';
+    b.onclick=()=>{ eatsSlot=s; closeModal('slot-modal'); renderEats(); };
+    sbtns.appendChild(b);
+  });
+}
+
+function logEatsItem(item, key, restoName) {
+  selRestoItem=key;
+  const label = restoName==='Home' ? item.name : item.name+' ('+restoName+')';
+  D.logs.push({ id:Date.now(), date:today(), slot:eatsSlot, text:label, portion:item.portion, ft:item.ft, icon:item.icon });
+  saveData(); renderEats(); renderMealSlots();
+  setTimeout(()=>{ selRestoItem=null; renderEats(); }, 700);
+}
+
+// ══════════════════════════════════════
+// GUIDE TAB
+// ══════════════════════════════════════
+function renderGuide() {
+  const container = document.getElementById('guide-content'); container.innerHTML='';
+  const m = MODES[D.mode];
+
+  if (D.mode==='jump') {
+    // 7-day rules
+    let html='<div class="card"><div class="lbl">7-DAY RULES</div>';
+    JUMP_RULES.forEach((r,i)=>{ html+=`<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start"><span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${m.color};min-width:24px">${i+1}</span><span style="font-size:13px;color:#bbb;line-height:1.5">${r}</span></div>`; });
+    html+='</div>';
+    container.innerHTML=html;
+  }
+
+  // Portions guide
+  const pgCard=document.createElement('div'); pgCard.className='card';
+  pgCard.innerHTML='<div class="lbl">PORTIONS — NO MEASURING</div>';
+  PORTIONS_GUIDE.forEach(p=>{
+    const row=document.createElement('div'); row.className='pg-row';
+    row.innerHTML=`<span class="pg-icon">${p.icon}</span><div><div class="pg-name">${p.name}</div><div class="pg-desc">${p.desc}</div></div>`;
+    pgCard.appendChild(row);
+  });
+  container.appendChild(pgCard);
+
+  if (D.mode!=='jump') {
+    // Food guide
+    const fgCard=document.createElement('div'); fgCard.className='card';
+    fgCard.innerHTML='<div class="lbl">FOOD GUIDE</div>';
+    [
+      {label:'✅ EAT FREELY',color:'#7FFFD4',items:['Chicken / turkey / fish','Eggs','Greek yogurt / cottage cheese','Steak / lean beef','Protein shake','Vegetables (any)','Almonds / nuts (handful)','Avocado (half)']},
+      {label:'⚡ EAT MINDFULLY',color:'#FFD447',items:['Rice / sweet potato','Oats','Fruit','Cheese','Whole grain bread (1 slice)']},
+      {label:'🚫 MINIMIZE',color:'#FF8F7F',items:['Chips / crackers','Sweets / dessert','Soda','Bread basket / tortillas','Fried anything']},
+    ].forEach(g=>{
+      const sec=document.createElement('div'); sec.style.marginBottom='14px';
+      sec.innerHTML=`<div class="gi-title" style="color:${g.color}">${g.label}</div>`+g.items.map(i=>`<div class="gi-item">· ${i}</div>`).join('');
+      fgCard.appendChild(sec);
+    });
+    container.appendChild(fgCard);
+
+    // 7-day promo
+    const promo=document.createElement('div'); promo.className='card';
+    promo.style.cssText='background:rgba(255,212,71,.05);border-color:rgba(255,212,71,.2);margin-bottom:12px';
+    promo.innerHTML=`<div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:#FFD447;margin-bottom:6px">NEED A JUMPSTART?</div><div style="font-size:12px;color:#666;margin-bottom:12px">7-day low carb reset. Drops bloat fast, rebuilds momentum.</div>`;
+    const pb=document.createElement('button'); pb.className='btn btn-p btn-full'; pb.style.background='#FFD447'; pb.textContent='ACTIVATE 7-DAY RESET';
+    pb.onclick=()=>setMode('jump'); promo.appendChild(pb); container.appendChild(promo);
+  }
+
+  // Eat Out Guide
+  const eoCard=document.createElement('div'); eoCard.className='card';
+  eoCard.innerHTML=`<div class="lbl">EAT OUT GUIDE</div><div style="font-size:11px;color:#555;margin-bottom:12px;line-height:1.5">Tap your restaurant type — instant protein-first strategy.</div>`;
+  const grid=document.createElement('div'); grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px';
+  CUISINES.forEach(c=>{
+    const b=document.createElement('button'); b.className='cuisine-btn'+(activeCuisine===c.id?' active':'');
+    b.innerHTML=`<span style="font-size:22px">${c.icon}</span><span>${c.label}</span>`;
+    b.onclick=()=>{ activeCuisine=activeCuisine===c.id?null:c.id; renderGuide(); };
+    grid.appendChild(b);
+  });
+  eoCard.appendChild(grid);
+  if (activeCuisine) {
+    const c=CUISINES.find(x=>x.id===activeCuisine);
+    if (c) {
+      const res=document.createElement('div'); res.style.cssText='background:#1a1a1a;border-radius:10px;padding:14px';
+      res.innerHTML=`<div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--accent);letter-spacing:1px;margin-bottom:10px">${c.icon} ${c.label.toUpperCase()}</div>`+
+        `<div style="font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:2px;color:#444;margin-bottom:6px">✅ ORDER THIS</div>`+
+        c.order.map(o=>`<div style="font-size:13px;color:#ccc;padding:4px 0;border-bottom:1px solid var(--border)">· ${o}</div>`).join('')+
+        `<div style="font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:2px;color:#444;margin:10px 0 6px">🚫 SKIP</div>`+
+        c.skip.map(s=>`<div style="font-size:12px;color:#555;padding:3px 0">· ${s}</div>`).join('')+
+        `<div style="background:#141414;border-radius:8px;padding:10px;margin-top:10px"><div style="font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:4px">💡 TIP</div><div style="font-size:12px;color:#888;line-height:1.5">${c.tip}</div></div>`;
+      eoCard.appendChild(res);
+    }
+  }
+  container.appendChild(eoCard);
+}
+
+// ══════════════════════════════════════
+// BODY TAB
+// ══════════════════════════════════════
+function latestWeight() {
+  if (!D.weights.length) return null;
+  return [...D.weights].sort((a,b)=>a.date>b.date?-1:1)[0].weight;
+}
+
+function renderBody() {
+  const latest=latestWeight();
+  const target=Number(D.settings?.targetWeight)||205;
+  const goalTarget=document.getElementById('goal-target'); if(goalTarget) goalTarget.textContent=target;
+  const goalNow=document.getElementById('goal-now');
+  goalNow.textContent=latest||'—'; goalNow.style.color=latest?'var(--text)':'#444';
+  const recentW=[...D.weights].sort((a,b)=>a.date>b.date?-1:1).slice(0,10).reverse();
+  if (recentW.length) {
+    document.getElementById('wt-empty').style.display='none';
+    document.getElementById('wt-chart').style.display='';
+    const bars=document.getElementById('chart-bars'); bars.innerHTML='';
+    const dates=document.getElementById('chart-dates'); dates.innerHTML='';
+    const vals=recentW.map(w=>w.weight);
+    const min=Math.min(...vals)-1.5, max=Math.max(...vals)+1.5;
+    recentW.forEach((w,i)=>{
+      const h=Math.round(((w.weight-min)/(max-min))*65+12);
+      const isLast=i===recentW.length-1;
+      const wrap=document.createElement('div'); wrap.className='chart-wrap';
+      const val=document.createElement('div'); val.className='chart-val'+(isLast?' cur':''); val.textContent=w.weight;
+      const bar=document.createElement('div'); bar.className='chart-bar'+(isLast?' cur':''); bar.style.height=h+'px';
+      wrap.appendChild(val); wrap.appendChild(bar); bars.appendChild(wrap);
+      const dt=document.createElement('span'); dt.textContent=fmtDate(w.date); dates.appendChild(dt);
+    });
+  }
+  if (latest) {
+    const pct=Math.max(5,Math.min(100,((latest-target)/15)*100));
+    document.getElementById('goal-bar').style.width=pct+'%';
+    document.getElementById('goal-note').textContent=latest>target?`${(latest-target).toFixed(1)} lbs to go · slow & steady keeps muscle`:'🎯 Goal reached';
+  }
+}
+
+function openWeightModal() {
+  selWtDay=today();
+  buildDayBtns('wt-day-btns', selWtDay, d=>{ selWtDay=d; buildDayBtns('wt-day-btns',selWtDay,d2=>{selWtDay=d2;}); });
+  document.getElementById('wt-input').value='';
+  openModal('weight-modal');
+}
+
+function saveWeight() {
+  const w=parseFloat(document.getElementById('wt-input').value); if(!w) return;
+  D.weights=D.weights.filter(x=>x.date!==selWtDay);
+  D.weights.push({date:selWtDay,weight:w});
+  saveData(); document.getElementById('wt-input').value=''; closeModal('weight-modal'); renderHeader(); renderBody();
+}
+
+// ══════════════════════════════════════
+// TRAIN TAB
+// ══════════════════════════════════════
+function renderTrain() {
+  const list=document.getElementById('wk-list'); list.innerHTML='';
+  const empty=document.getElementById('wk-empty');
+  const stats=document.getElementById('wk-stats');
+  if (!D.workouts.length) { empty.style.display=''; stats.style.display='none'; return; }
+  empty.style.display='none';
+  [...D.workouts].reverse().slice(0,15).forEach(w=>{
+    const card=document.createElement('div'); card.className='card wt-card';
+    card.innerHTML=`<div><div class="wt-type">${w.type}</div>${w.bodyParts?`<div class="wt-parts">${w.bodyParts}</div>`:''} ${w.notes?`<div class="wt-notes">${w.notes}</div>`:''}<div class="wt-date">${fmtDate(w.date)}</div></div><div class="wt-dur">${w.duration}<span> MIN</span></div>`;
+    list.appendChild(card);
+  });
+  const wk=D.workouts.filter(w=>daysBetween(w.date,today())<=6);
+  stats.style.display='';
+  document.getElementById('stat-sess').textContent=wk.length;
+  document.getElementById('stat-min').textContent=wk.reduce((a,w)=>a+(+w.duration||0),0);
+}
+
+function openWorkoutModal() {
+  selWDay=today(); selBParts=[];
+  buildDayBtns('wk-day-btns',selWDay,d=>{ selWDay=d; buildDayBtns('wk-day-btns',selWDay,d2=>{selWDay=d2;}); });
+  buildWTypeBtns(); buildBPartBtns();
+  document.getElementById('wk-dur').value=''; document.getElementById('wk-notes').value='';
+  openModal('workout-modal');
+}
+
+function buildWTypeBtns() {
+  const c=document.getElementById('wtype-btns'); c.innerHTML='';
+  WTYPES.forEach(t=>{
+    const b=document.createElement('button'); b.className='btn '+(selWType===t?'btn-p':'btn-g'); b.style.padding='8px 14px'; b.textContent=t;
+    b.onclick=()=>{ selWType=t; selBParts=[]; buildWTypeBtns(); buildBPartBtns(); document.getElementById('body-parts-sec').style.display=t==='MaxPro'?'':'none'; };
+    c.appendChild(b);
+  });
+  document.getElementById('body-parts-sec').style.display=selWType==='MaxPro'?'':'none';
+}
+
+function buildBPartBtns() {
+  const c=document.getElementById('bpart-btns'); c.innerHTML='';
+  BPARTS.forEach(p=>{
+    const sel=selBParts.includes(p);
+    const b=document.createElement('button'); b.className='btn '+(sel?'btn-p':'btn-g'); b.style.padding='8px 14px'; b.textContent=p;
+    b.onclick=()=>{ selBParts=sel?selBParts.filter(x=>x!==p):[...selBParts,p]; buildBPartBtns(); };
+    c.appendChild(b);
+  });
+}
+
+function saveWorkout() {
+  const dur=document.getElementById('wk-dur').value; if(!dur) return;
+  const notes=document.getElementById('wk-notes').value;
+  const bodyParts=selWType==='MaxPro'&&selBParts.length?selBParts.join(', '):'';
+  D.workouts.push({id:Date.now(),date:selWDay,type:selWType,duration:dur,notes,bodyParts});
+  saveData(); closeModal('workout-modal'); renderTrain();
+}
+
+// ══════════════════════════════════════
+// DAY PICKER
+// ══════════════════════════════════════
+function buildDayBtns(containerId, selectedDay, onSelect) {
+  const c=document.getElementById(containerId); if(!c) return;
+  c.innerHTML='';
+  getLast7Days().forEach(({iso,label})=>{
+    const b=document.createElement('button');
+    b.className='btn '+(selectedDay===iso?'btn-p':'btn-g');
+    b.style.cssText='padding:6px 10px;font-size:11px;flex:1;min-width:0';
+    b.textContent=label;
+    b.onclick=()=>onSelect(iso);
+    c.appendChild(b);
+  });
+}
+
+// ══════════════════════════════════════
+// BACKUP / RESTORE
+// ══════════════════════════════════════
+function exportData() {
+  const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='fuel-backup-'+today()+'.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+function importData(e) {
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{ try{ D=JSON.parse(ev.target.result); saveData(); init(); alert('✅ Restored!'); }catch{ alert('❌ Could not read file.'); }};
+  reader.readAsText(file);
+}
+
+
+
+// ══════════════════════════════════════
+// CUSTOMIZE
+// ══════════════════════════════════════
+function escapeHtml(str){return String(str).replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]));}
+function latestCoachNote(){
+  if(!D.coachNotes || !D.coachNotes.length) return null;
+  return [...D.coachNotes].sort((a,b)=>a.date>b.date?-1:1)[0];
+}
+function renderCustom(){
+  ensureDataShape();
+  document.getElementById('set-title').value=D.settings.title||'FUEL';
+  document.getElementById('set-subtitle').value=D.settings.subtitle||'';
+  document.getElementById('set-target').value=D.settings.targetWeight||205;
+  const note=latestCoachNote();
+  document.getElementById('coach-note-input').value=note?.text||'';
+  const list=document.getElementById('fav-list'); list.innerHTML='';
+  if(!D.favorites.length){ list.innerHTML='<div style="font-size:12px;color:#444">No favorites yet.</div>'; }
+  D.favorites.forEach((f,i)=>{
+    const row=document.createElement('div'); row.className='fav-row';
+    row.innerHTML=`<div><div class="fav-main">${escapeHtml(f.name)}</div><div class="fav-sub">${escapeHtml(f.slot||'Meal 1')} · ${escapeHtml(f.portion||'1 serving')}</div></div>`;
+    const rm=document.createElement('button'); rm.className='rm-btn'; rm.textContent='×';
+    rm.onclick=()=>{D.favorites.splice(i,1); saveData(); renderCustom(); renderMealSlots();};
+    row.appendChild(rm); list.appendChild(row);
+  });
+}
+function saveSettings(){
+  ensureDataShape();
+  D.settings.title=document.getElementById('set-title').value.trim()||'FUEL';
+  D.settings.subtitle=document.getElementById('set-subtitle').value.trim();
+  D.settings.targetWeight=parseFloat(document.getElementById('set-target').value)||205;
+  saveData(); applyMode(); renderHeader(); renderBody(); alert('Saved.');
+}
+function addFavorite(){
+  const name=document.getElementById('fav-name').value.trim(); if(!name) return;
+  const portion=document.getElementById('fav-portion').value.trim()||'1 serving';
+  const slot=document.getElementById('fav-slot').value||'Meal 1';
+  D.favorites.push({id:Date.now(),name,portion,slot}); saveData();
+  document.getElementById('fav-name').value=''; document.getElementById('fav-portion').value='';
+  renderCustom(); renderMealSlots();
+}
+function saveCoachNote(){
+  const text=document.getElementById('coach-note-input').value.trim();
+  D.coachNotes = (D.coachNotes||[]).filter(n=>n.date!==today());
+  if(text) D.coachNotes.push({date:today(),text});
+  saveData(); renderCustom(); renderMealSlots(); alert('Coach note saved.');
+}
+function clearTodayLogs(){
+  if(!confirm('Clear today\'s food logs?')) return;
+  D.logs=D.logs.filter(l=>l.date!==today()); saveData(); renderMealSlots(); alert('Today cleared.');
+}
+function resetCustomOnly(){
+  if(!confirm('Reset title, target, favorites, and coach notes?')) return;
+  D.settings={title:'FUEL',subtitle:'',targetWeight:205}; D.favorites=[]; D.coachNotes=[]; saveData(); applyMode(); renderHeader(); renderCustom(); renderMealSlots(); renderBody();
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+function init() {
+  ensureDataShape();
+  saveData();
+  applyMode();
+  renderHeader();
+  renderMealSlots();
+  buildWTypeBtns();
+  buildBPartBtns();
+}
+
+init();
+</script>
+</body>
+</html>
