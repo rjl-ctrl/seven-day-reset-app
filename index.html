@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>FUEL v7</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#050505;--card:#121212;--line:#343434;--mint:#9dffd9;--text:#fff;--sub:#dedede;--green:#78ffae;--yellow:#ffe477;--red:#ff8fa8}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;max-width:430px;margin:0 auto;min-height:100vh;padding:22px 18px 80px}
+.bebas{font-family:'Bebas Neue',sans-serif;letter-spacing:.12em}
+.top{display:flex;justify-content:space-between;margin-bottom:18px}
+.mode-pill{border:1px solid var(--line);background:#151515;border-radius:999px;padding:10px 14px;color:var(--mint);font-size:14px}
+.weight{width:92px;height:72px;border:1px solid var(--line);border-radius:18px;background:#151515;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--sub)}
+.weight strong{display:block;color:var(--mint);font-size:22px}
+h1{font-family:'Bebas Neue';font-size:64px;line-height:.9}
+.subtitle{color:var(--sub);margin-top:8px;margin-bottom:22px}
+.tabs{display:flex;gap:12px;overflow-x:auto;margin:22px 0;padding-bottom:4px}
+.tab{border:none;background:transparent;color:#c8c8c8;font-family:'Bebas Neue';font-size:19px;letter-spacing:.12em;padding:13px 10px;border-radius:10px}
+.tab.active{background:var(--mint);color:#07100c}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:17px}
+.card.hl{border-color:rgba(157,255,217,.55)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.section-title{font-family:'Bebas Neue';letter-spacing:.16em;color:var(--mint);font-size:29px;line-height:1.1}
+.muted{color:var(--sub);line-height:1.45}
+.btn{border:none;background:#242424;color:#fff;border-radius:15px;padding:12px 16px;font-weight:700;font-size:15px}
+.btn.mint{background:var(--mint);color:#07100c}.btn.full{width:100%;margin-top:10px}
+.day-strip{display:flex;gap:10px;overflow-x:auto;margin-top:14px;padding-bottom:5px}
+.day-card{min-width:76px;text-align:center;border:1px solid var(--line);background:#151515;border-radius:17px;padding:13px 8px;color:#e0e0e0}
+.day-card.active{border-color:var(--mint);box-shadow:0 0 14px rgba(157,255,217,.24);color:#fff}
+.day-card small{display:block;color:#d7d7d7;margin-top:4px}
+.food-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 0;border-top:1px solid #2c2c2c}
+.food-main{font-size:18px;line-height:1.25;color:#fff}
+.food-sub{font-family:'Bebas Neue';letter-spacing:.09em;color:var(--mint);font-size:16px;margin-top:4px}
+.food-actions{display:flex;gap:6px;align-items:center}
+.input-row{display:flex;gap:10px;margin-top:12px}
+input,textarea,select{width:100%;background:#202020;color:#fff;border:1px solid #666;border-radius:13px;padding:14px;font-size:16px}
+select{font-size:17px}
+.dropdown-box{background:#171717;border:1px solid #393939;border-radius:17px;padding:13px;margin-top:13px}
+.dropdown-title{font-family:'Bebas Neue';letter-spacing:.13em;color:var(--mint);font-size:21px;margin-bottom:9px}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}
+.quick{background:#1f1f1f;border:1px solid #3a3a3a;color:#fff;border-radius:15px;padding:13px;text-align:left;line-height:1.25;font-size:15px}
+.choice-rating{font-family:'Bebas Neue';letter-spacing:.1em;font-size:16px;margin-top:5px}
+.green{color:var(--green)}.yellow{color:var(--yellow)}.red{color:var(--red)}
+.close{background:transparent;border:none;color:#cfcfcf;font-size:24px}
+.edit{background:#242424;border:1px solid #555;color:#fff;border-radius:10px;padding:8px 9px;font-size:12px;font-weight:700}
+.note{background:#171717;border-left:4px solid var(--mint);padding:13px;border-radius:12px;color:#ededed;line-height:1.45;margin-top:12px}
+.restaurant-card{background:#171717;border:1px solid #333;border-radius:18px;padding:15px;margin-top:13px}
+.restaurant-name{font-family:'Bebas Neue';letter-spacing:.12em;color:var(--mint);font-size:26px}
+.menu-line{background:#202020;border-radius:14px;padding:12px;margin-top:10px}
+.menu-title{font-weight:700;font-size:17px}.menu-sub{color:#dedede;margin-top:4px;line-height:1.35}
+</style>
+</head>
+<body>
+<div class="top"><div class="mode-pill bebas" id="currentMode">● SLOW BURN</div><div class="weight" onclick="showTab('body')"><div><strong id="weightDisplay">—</strong><span class="bebas">LBS · TAP</span></div></div></div>
+<h1>FUEL</h1><div class="subtitle">Protein first. Real life meals. No spiral.</div>
+<div class="tabs"><button class="tab active" data-tab="today">TODAY</button><button class="tab" data-tab="eats">EATS</button><button class="tab" data-tab="guide">GUIDE</button><button class="tab" data-tab="body">BODY</button><button class="tab" data-tab="custom">CUSTOM</button></div>
+
+<section id="today" class="panel active">
+<div class="card hl"><div class="section-title">TODAY</div><div class="muted" id="todaySub">0 logged items</div><div class="day-strip" id="dayStrip"></div></div>
+
+<div class="card"><div class="row"><div class="section-title">☀️ MORNING STARTER</div><button class="btn" onclick="toggleAdd('morning')">+ LOG</button></div><div id="morningList"></div>
+<div id="morningAdd" style="display:none">
+<div class="dropdown-box"><div class="dropdown-title">DRINK + SIZE</div>
+<select id="morningDrink" onchange="updateMorningSizes()"><option value="">Choose drink</option><option value="proteinfoam">Starbucks protein foam cold brew</option><option value="creamcoldbrew">Cold brew + heavy cream + SF sweetener</option><option value="tea">Tea + SF sweetener</option><option value="einstein">Einstein hazelnut coffee + Splenda</option><option value="dutchcocomo">Dutch Bros Cocomo diet style</option></select>
+<select id="morningSize" style="margin-top:10px;display:none"></select>
+<button class="btn mint full" onclick="addMorningDrink()">LOG DRINK</button><button class="btn full" onclick="closeAllAdds()">DONE</button></div>
+<div class="input-row"><input id="morningInput" placeholder="Other morning starter"><button class="btn mint" onclick="addCustom('morning','morningInput',false)">ADD</button></div>
+</div></div>
+
+<div id="mealCards"></div>
+</section>
+
+<section id="eats" class="panel"><div class="card"><div class="section-title">RESTAURANT MENUS</div><div class="muted">These same choices are inside each Meal + LOG. Add multiple à la carte items, then tap Done.</div></div><div id="restaurantGuide"></div></section>
+<section id="guide" class="panel"><div class="card"><div class="section-title">MODES</div><div class="quick-grid"><button class="quick" onclick="setMode('⚡ 1-DAY COACH RESET')">⚡ 1-Day Reset</button><button class="quick" onclick="setMode('🔥 7-DAY RESET')">🔥 7-Day Reset</button><button class="quick" onclick="setMode('🍽️ GOING OUT')">🍽️ Going Out</button><button class="quick" onclick="setMode('🎉 CELEBRATION')">🎉 Celebration</button></div><div class="note" id="modeAdvice">Slow Burn: stay steady, protein first, no drama.</div></div></section>
+<section id="body" class="panel"><div class="card"><div class="section-title">BODY CHECK</div><input id="weightInput" type="number" placeholder="Enter weight"><button class="btn mint" style="margin-top:10px" onclick="saveWeight()">SAVE WEIGHT</button></div></section>
+<section id="custom" class="panel"><div class="card"><div class="section-title">CUSTOM</div><textarea id="coachNote" placeholder="Custom coach note"></textarea><button class="btn mint" style="margin-top:10px" onclick="saveNote()">SAVE NOTE</button><div class="note" id="savedNote">No custom note yet.</div></div><div class="card"><div class="section-title">DATA</div><button class="btn" onclick="clearSelectedDay()">Clear selected day</button> <button class="btn" onclick="localStorage.removeItem('fuelV7Fixed');location.reload()">Reset app data</button></div></section>
+
+<script>
+const KEY='fuelV7Fixed';let state=JSON.parse(localStorage.getItem(KEY)||'{}');if(!state.days)state.days={};if(!state.selectedDate)state.selectedDate=new Date().toISOString().slice(0,10);if(!state.mode)state.mode='● SLOW BURN';
+
+const morningMenus={
+proteinfoam:{label:'☕ Starbucks protein foam cold brew',sizes:[['Tall','GREEN','Coach safe'],['Grande','YELLOW','Balanced'],['Venti','RED','Heavier day']]},
+creamcoldbrew:{label:'☕ Cold brew + heavy cream + SF sweetener',sizes:[['Light cream','GREEN','Coach safe'],['Moderate cream','YELLOW','Watch pour'],['Heavy pour','RED','Heavier day']]},
+tea:{label:'🍵 Tea + SF sweetener',sizes:[['Any size','GREEN','Coach safe']]},
+einstein:{label:'☕ Einstein hazelnut coffee + Splenda',sizes:[['Regular','GREEN','Simple'],['Large','YELLOW','Fine if needed']]},
+dutchcocomo:{label:'☕ Dutch Bros Cocomo diet style',sizes:[['Small','GREEN','Best choice'],['Medium','YELLOW','Occasional'],['Large','RED','Dessert territory']]}
+};
+
+const menus={
+starbucks:{label:'☕ Starbucks',items:[['Protein Foam Cold Brew','Choose Morning Starter for size','yellow'],['Cold Brew + Heavy Cream + SF','Light cream preferred','green']]},
+pollo:{label:'🍗 Pollo Rico',items:[['Half Chicken','Rotisserie clean protein','green'],['Charro Beans','Moderate carbs + protein','yellow']]},
+catrina:{label:'🌮 Tacos La Catrina',items:[['Birria Roast Tacos (3)','Corn tortillas · slow roasted beef · consommé','yellow'],['Street Tacos + Extra Protein','Cleaner taco choice','green']]},
+fez:{label:'🥙 Fez Fresh Mediterranean',items:[['Lamb & Beef Wrap','Pita · yogurt sauce · vegetables','yellow'],['Protein Plate Over Greens','Best Fez option','green']]},
+soup:{label:'🥣 The Soup Peddler',items:[['Lentil Soup','High satiety · coach approved','green'],['Soup + Bread Side','More filling but heavier','yellow']]},
+nancys:{label:"🥗 Nancy's Sky Garden",items:[['Lentil Soup','Coach safe','green'],['Chicken','Protein first','green'],['Sweet Potato Noodles','Portion sensitive','yellow'],['Half Salad','Add protein if possible','green'],['Greens / vegetables','Coach approved add-on','green']]},
+trucks:{label:'🚚 Food Trucks',items:[['Breakfast Taco','Protein first if possible','yellow'],['Street Taco','Good if protein-forward','green'],['Quesadilla','Strategic treat','yellow'],['Loaded Fries','Celebration food','red'],['Birria / Specialty Taco','Enjoy, watch portion','yellow']]},
+chuys:{label:"🌯 Chuy's",items:[['Double Chicken Fajitas','No tortillas, skip rice/beans, pico/salsa','green'],['Small Guac','Optional add-on','yellow']]},
+casa:{label:'🥗 Casa Costa',items:[['Half Salad','Good lighter meal','green'],['Spinach Feta Quiche Slice','Fine, pair with protein if needed','yellow']]},
+generic:{label:'🍽️ Generic Restaurant',items:[['Protein + Vegetables','Default green choice','green'],['Burger no fries','Manageable yellow','yellow'],['Dessert / big starch meal','Celebration food','red']]}
+};
+
+function saveState(){localStorage.setItem(KEY,JSON.stringify(state));render();}
+function selected(){if(!state.days[state.selectedDate])state.days[state.selectedDate]={morning:[],meal1:[],meal2:[],meal3:[],snack:[]};['morning','meal1','meal2','meal3','snack'].forEach(k=>{if(!state.days[state.selectedDate][k])state.days[state.selectedDate][k]=[]});return state.days[state.selectedDate]}
+function fmtDate(d){return d.toISOString().slice(0,10)}function dayName(d){return d.toLocaleDateString(undefined,{weekday:'short'}).toUpperCase()}
+function escapeHTML(s){return String(s||'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]))}
+function renderDays(){const box=document.getElementById('dayStrip');box.innerHTML='';const now=new Date();for(let i=-2;i<5;i++){const d=new Date(now);d.setDate(now.getDate()+i);const key=fmtDate(d);const count=state.days[key]?Object.values(state.days[key]).flat().length:0;const el=document.createElement('div');el.className='day-card '+(key===state.selectedDate?'active':'');el.innerHTML='<div>'+dayName(d)+'</div><div>'+d.getDate()+'</div><small>'+count+' item'+(count===1?'':'s')+'</small>';el.onclick=()=>{state.selectedDate=key;saveState()};box.appendChild(el)}}
+function renderList(id,arr,key){const box=document.getElementById(id);if(!box)return;box.innerHTML='';arr.forEach((x,i)=>{const div=document.createElement('div');div.className='food-item';div.innerHTML='<div style="flex:1"><div class="food-main">'+escapeHTML(x.name)+'</div><div class="food-sub">'+escapeHTML(x.note||'')+'</div></div><div class="food-actions"><button class="edit">EDIT</button><button class="close">×</button></div>';div.querySelector('.edit').onclick=()=>editItem(key,i);div.querySelector('.close').onclick=()=>{arr.splice(i,1);saveState()};box.appendChild(div)})}
+function mealCard(key,title){return '<div class="card"><div class="row"><div class="section-title">'+title+'</div><button class="btn" onclick="toggleAdd(\''+key+'\')">+ LOG</button></div><div id="'+key+'List"></div><div id="'+key+'Add" style="display:none"><div class="dropdown-box"><div class="dropdown-title">RESTAURANT / FOOD TRUCK</div><select id="'+key+'Restaurant" onchange="renderRestaurantChoices(\''+key+'\')"><option value="">Choose place</option>'+Object.keys(menus).map(k=>'<option value="'+k+'">'+menus[k].label+'</option>').join('')+'</select><select id="'+key+'Choice" style="margin-top:10px;display:none"></select><button class="btn mint full" onclick="addRestaurantChoice(\''+key+'\')">ADD ITEM</button><button class="btn full" onclick="closeAllAdds()">DONE</button></div><div class="input-row"><input id="'+key+'Input" placeholder="Or type custom food"><button class="btn mint" onclick="addCustom(\''+key+'\',\''+key+'Input\',false)">ADD</button></div><div class="quick-grid"><button class="quick" onclick="addPreset(\''+key+'\',\'🍗 Chicken\',\'GREEN · Protein first\',false)">🍗 Chicken<div class="choice-rating green">GREEN</div></button><button class="quick" onclick="addPreset(\''+key+'\',\'🥩 Steak / beef\',\'GREEN · Protein first\',false)">🥩 Steak<div class="choice-rating green">GREEN</div></button><button class="quick" onclick="addPreset(\''+key+'\',\'🥚 Eggs\',\'GREEN · Protein first\',false)">🥚 Eggs<div class="choice-rating green">GREEN</div></button><button class="quick" onclick="addPreset(\''+key+'\',\'🍕 Pizza\',\'RED · Celebration strategy\',false)">🍕 Pizza<div class="choice-rating red">RED</div></button></div></div></div>'}
+function updateMorningSizes(){const d=document.getElementById('morningDrink').value;const s=document.getElementById('morningSize');s.innerHTML='';if(!d){s.style.display='none';return}morningMenus[d].sizes.forEach((x,i)=>{const opt=document.createElement('option');opt.value=i;opt.textContent=x[0]+' — '+x[1]+' · '+x[2];s.appendChild(opt)});s.style.display='block'}
+function addMorningDrink(){const d=document.getElementById('morningDrink').value;if(!d)return;const i=Number(document.getElementById('morningSize').value||0);const m=morningMenus[d], sz=m.sizes[i];selected().morning.push({name:m.label+' · '+sz[0],note:sz[1]+' · '+sz[2]});saveState()}
+function renderRestaurantChoices(k){const rest=document.getElementById(k+'Restaurant').value;const choice=document.getElementById(k+'Choice');choice.innerHTML='';if(!rest){choice.style.display='none';return}menus[rest].items.forEach((item,idx)=>{const opt=document.createElement('option');opt.value=idx;opt.textContent=item[0]+' — '+item[1];choice.appendChild(opt)});choice.style.display='block'}
+function addRestaurantChoice(k){const rest=document.getElementById(k+'Restaurant').value;const choice=document.getElementById(k+'Choice');if(!rest||choice.style.display==='none')return;const item=menus[rest].items[Number(choice.value)];const rating=item[2].toUpperCase();selected()[k].push({name:item[0],note:menus[rest].label+' · '+rating+' · '+item[1]});saveState()}
+function renderGuide(){const box=document.getElementById('restaurantGuide');if(!box)return;box.innerHTML='';Object.keys(menus).forEach(k=>{const m=menus[k];const div=document.createElement('div');div.className='restaurant-card';div.innerHTML='<div class="restaurant-name">'+m.label+'</div>'+m.items.map(item=>'<div class="menu-line"><div class="menu-title '+item[2]+'">'+item[0]+'</div><div class="menu-sub">'+item[1]+'</div></div>').join('');box.appendChild(div)})}
+function render(){renderDays();const d=selected();document.getElementById('mealCards').innerHTML=mealCard('meal1','MEAL 1')+mealCard('meal2','MEAL 2')+mealCard('meal3','MEAL 3')+mealCard('snack','SNACK');renderList('morningList',d.morning,'morning');['meal1','meal2','meal3','snack'].forEach(k=>renderList(k+'List',d[k],k));const total=Object.values(d).flat().length;document.getElementById('todaySub').textContent=total+' logged item'+(total===1?'':'s');document.getElementById('currentMode').textContent=state.mode;document.getElementById('weightDisplay').textContent=state.weight||'—';document.getElementById('savedNote').textContent=state.note||'No custom note yet.';modeAdvice();renderGuide()}
+function closeAllAdds(){['morning','meal1','meal2','meal3','snack'].forEach(k=>{const el=document.getElementById(k+'Add');if(el)el.style.display='none'})}
+function toggleAdd(k){const el=document.getElementById(k+'Add');if(!el)return;const open=el.style.display==='none'||el.style.display==='';closeAllAdds();el.style.display=open?'block':'none'}
+function addPreset(k,name,note,close=true){selected()[k].push({name,note});if(close)closeAllAdds();saveState()}
+function addCustom(k,inputId,close=true){const el=document.getElementById(inputId);if(el&&el.value.trim()){selected()[k].push({name:el.value.trim(),note:'CUSTOM'});el.value='';if(close)closeAllAdds();saveState()}}
+function editItem(k,i){const item=selected()[k][i];if(!item)return;const n=prompt('Edit food line:',item.name||'');if(n===null)return;const note=prompt('Edit note:',item.note||'');item.name=n.trim()||item.name;item.note=(note===null?item.note:note.trim());saveState()}
+function showTab(tab){document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));document.querySelector('.tab[data-tab="'+tab+'"]').classList.add('active');document.getElementById(tab).classList.add('active')}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+function setMode(m){state.mode=m;saveState()}function modeAdvice(){const node=document.getElementById('modeAdvice');if(!node)return;let txt='Slow Burn: stay steady, protein first, no drama.';if(state.mode.includes('1-DAY'))txt='1-Day Reset: hydrate, simplify, protein first.';if(state.mode.includes('7-DAY'))txt='7-Day Reset: keep choices tight.';if(state.mode.includes('GOING'))txt='Going Out: protein earlier, choose strategically.';if(state.mode.includes('CELEBRATION'))txt='Celebration: enjoy intentionally and protect tomorrow.';node.textContent=txt}
+function saveWeight(){const w=document.getElementById('weightInput').value;if(w){state.weight=w;saveState()}}function saveNote(){state.note=document.getElementById('coachNote').value;saveState()}function clearSelectedDay(){delete state.days[state.selectedDate];saveState()}
+render();
+</script>
+</body>
+</html>
