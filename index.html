@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>FUEL Working Restore</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#050505;color:#fff;font-family:Arial,sans-serif;max-width:430px;margin:0 auto;padding:20px 16px 80px}
+h1{font-size:64px;margin:12px 0 6px;font-weight:900}
+.sub{color:#ddd;font-size:18px;line-height:1.35;margin-bottom:18px}
+.version{display:inline-block;background:#9dffd9;color:#03100b;font-weight:900;border-radius:999px;padding:8px 12px}
+.tabs{display:flex;gap:10px;margin:20px 0}
+.tab{border:none;background:#202020;color:#ddd;border-radius:14px;padding:13px 16px;font-weight:900}
+.tab.active{background:#9dffd9;color:#03100b}
+.panel{display:none}.panel.active{display:block}
+.card{background:#121212;border:1px solid #3a3a3a;border-radius:22px;padding:18px;margin-bottom:17px}
+.card.hot{border-color:#9dffd9}
+.title{font-size:28px;color:#9dffd9;font-weight:900;letter-spacing:2px;margin-bottom:8px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.btn{border:none;background:#292929;color:#fff;border-radius:15px;padding:12px 16px;font-weight:900}
+.btn.green{background:#9dffd9;color:#03100b}
+.food{border-top:1px solid #333;padding:13px 0;display:flex;justify-content:space-between;gap:10px}
+.foodName{font-size:19px;font-weight:700}
+.foodNote{color:#9dffd9;font-size:13px;font-weight:900;margin-top:5px;letter-spacing:1px}
+.smallBtn{background:#242424;border:1px solid #555;color:#fff;border-radius:9px;padding:7px 8px;font-size:12px;font-weight:900}
+.drawer{background:#191919;border:1px solid #444;border-radius:17px;padding:13px;margin-top:13px;display:none}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.choice{background:#242424;border:1px solid #444;color:#fff;border-radius:14px;padding:12px;text-align:left;min-height:72px}
+.choiceTitle{font-weight:800;line-height:1.2}
+.rating{font-size:13px;margin-top:7px;font-weight:900;letter-spacing:1px}
+.greenText{color:#78ffae}.yellowText{color:#ffe477}.redText{color:#ff8fa8}
+select,input{width:100%;background:#202020;color:#fff;border:1px solid #666;border-radius:12px;padding:13px;font-size:16px;margin-top:10px}
+.notice{background:#191919;border-left:4px solid #9dffd9;border-radius:12px;padding:12px;color:#eee;line-height:1.4;margin-top:10px}
+.modeBtn{width:100%;background:#1b1b1b;border:1px solid #3a3a3a;color:#fff;border-radius:16px;padding:14px;text-align:left;margin-top:10px}
+.modeBtn.active{border-color:#9dffd9;background:#173326}
+.modeName{font-size:20px;font-weight:900;color:#9dffd9}
+.modeText{color:#ddd;margin-top:4px;line-height:1.35}
+</style>
+</head>
+<body>
+
+<div class="version">FUEL WORKING RESTORE</div>
+<h1>FUEL</h1>
+<div class="sub" id="subtitle">Protein first. Real life meals. No spiral.</div>
+
+<div class="tabs">
+<button class="tab active" onclick="showTab('today', this)">TODAY</button>
+<button class="tab" onclick="showTab('modes', this)">MODES</button>
+<button class="tab" onclick="showTab('body', this)">BODY</button>
+</div>
+
+<section id="today" class="panel active">
+  <div class="card hot">
+    <div class="title" id="modeTitle">SLOW BURN ACTIVE</div>
+    <div class="sub" id="modeNote">Normal foods, restaurants, food trucks, and custom entries are available.</div>
+  </div>
+  <div id="sections"></div>
+</section>
+
+<section id="modes" class="panel">
+  <div class="card">
+    <div class="title">DAY MODE</div>
+    <div class="sub">Reset modes lock the day to approved choices only.</div>
+    <button class="modeBtn" onclick="setMode('slow')" id="m_slow"><div class="modeName">● SLOW BURN</div><div class="modeText">Normal flexibility.</div></button>
+    <button class="modeBtn" onclick="setMode('reset1')" id="m_reset1"><div class="modeName">⚡ 1-DAY RESET</div><div class="modeText">Locked: no sugar, bread, tortillas, noodles, pizza, dessert, or random add-ons.</div></button>
+    <button class="modeBtn" onclick="setMode('reset7')" id="m_reset7"><div class="modeName">🔥 7-DAY RESET</div><div class="modeText">Locked: clean repeatable meals and controlled snacks.</div></button>
+    <button class="modeBtn" onclick="setMode('going')" id="m_going"><div class="modeName">🍽️ GOING OUT</div><div class="modeText">Restaurant strategy and safer choices.</div></button>
+    <button class="modeBtn" onclick="setMode('celebration')" id="m_celebration"><div class="modeName">🎉 CELEBRATION</div><div class="modeText">Planned treats with protein anchors.</div></button>
+  </div>
+</section>
+
+<section id="body" class="panel">
+  <div class="card">
+    <div class="title">BODY CHECK</div>
+    <input id="weightInput" placeholder="Enter weight">
+    <button class="btn green" style="width:100%;margin-top:10px" onclick="saveWeight()">SAVE WEIGHT</button>
+    <div class="notice" id="weightSaved">No weight saved.</div>
+  </div>
+  <div class="card">
+    <div class="title">DATA</div>
+    <button class="btn" onclick="clearToday()">Clear today</button>
+    <button class="btn" onclick="localStorage.removeItem(KEY);location.reload()">Reset app</button>
+  </div>
+</section>
+
+<script>
+const KEY = "fuel_working_restore_v2";
+let state = JSON.parse(localStorage.getItem(KEY) || "{}");
+if (!state.mode) state.mode = "slow";
+if (!state.weight) state.weight = "";
+if (!state.day) state.day = {morning:[], meal1:[], meal2:[], meal3:[], snack:[]};
+
+const normalChoices = [
+["Chicken","GREEN","Protein first"],["Protein shake","GREEN","Protein support"],["Oikos PRO yogurt","GREEN","Easy protein"],
+["Eggs","GREEN","Protein first"],["Tuna + dill relish","GREEN","Simple protein"],["Tuna salad over greens","GREEN","Protein + salad"],
+["Salad + protein","GREEN","Clean meal"],["Chicken + salad","GREEN","Best simple meal"],["Almonds","YELLOW","Portion sensitive"],
+["Pizza","RED","Celebration strategy"]
+];
+
+const reset1Choices = [
+["Chicken","GREEN","Protein first"],["Protein shake","GREEN","Protein support"],["Oikos PRO yogurt","GREEN","Easy protein"],
+["Eggs","GREEN","Protein first"],["Tuna + dill relish","GREEN","No bread, no sweet relish"],["Tuna salad over greens","GREEN","Reset safe"],
+["Salad + protein","GREEN","Clean and simple"],["Lettuce wrap hamburger","GREEN","No bun, no fries"],["Burger patty + salad","GREEN","No bread, no sugar"],
+["Lentil soup","GREEN","Light and filling"],["Soup + chicken","GREEN","Reset combo"],["Grilled protein + vegetables","GREEN","Restaurant safe"]
+];
+
+const reset7Choices = [
+["Chicken + salad","GREEN","Repeatable clean meal"],["Chicken + vegetables","GREEN","Simple meal"],["Protein shake","GREEN","Protein support"],
+["Oikos PRO yogurt","GREEN","Easy protein"],["Eggs","GREEN","Protein first"],["Tuna + dill relish","GREEN","Easy protein"],
+["Tuna salad over greens","GREEN","Salad + protein"],["Lentil soup","GREEN","Filling option"],["Lettuce wrap hamburger","GREEN","No bun, no fries"],
+["Pollo Rico half chicken","GREEN","Clean protein"],["Nancy’s lentil soup","GREEN","Coach approved"],["Nancy’s chicken + vegetables","GREEN","Coach approved"],
+["Almonds","YELLOW","Small portion only"]
+];
+
+const goingChoices = [
+["Chuy's double chicken fajitas","GREEN","No tortillas, skip rice/beans"],["Nancy's soup + chicken","GREEN","Safe restaurant combo"],
+["Pollo Rico half chicken","GREEN","Clean protein"],["Street tacos + extra protein","YELLOW","Controlled choice"],
+["Lettuce wrap hamburger","GREEN","No bun, no fries"],["Protein before event","GREEN","Damage control"]
+];
+
+const celebrationChoices = [
+["Protein first before treat","GREEN","Anchor the day"],["Pizza","RED","Planned treat"],["Dessert / sweet item","RED","Planned, not spiral"],
+["Tomorrow reset meal","GREEN","Protect tomorrow"],["Chicken + salad","GREEN","Anchor meal"],["Protein shake","GREEN","Recovery support"]
+];
+
+const morningNormal = [
+["Starbucks protein foam cold brew · Tall","GREEN","Coach safe"],["Starbucks protein foam cold brew · Grande","YELLOW","Balanced"],
+["Starbucks protein foam cold brew · Venti","RED","Heavier day"],["Cold brew + heavy cream + SF · Light cream","GREEN","Best option"],
+["Tea + SF sweetener","GREEN","Safe drink"],["Dutch Bros Cocomo diet style · Small","GREEN","Best choice"]
+];
+
+const morningReset = [
+["Black cold brew","GREEN","Reset safe"],["Tea + SF sweetener","GREEN","Reset safe"],["Protein shake","GREEN","Reset support"],["Oikos PRO yogurt","GREEN","Easy protein"]
+];
+
+const restaurants = {
+home:{label:"Home Staples",items:normalChoices},
+nancys:{label:"Nancy's Sky Garden",items:[["Lentil soup","GREEN","Coach safe"],["Chicken","GREEN","Protein first"],["Half salad","GREEN","Add protein"],["Sweet potato noodles","YELLOW","Portion sensitive"]]},
+pollo:{label:"Pollo Rico",items:[["Half chicken","GREEN","Clean protein"],["Charro beans","YELLOW","Moderate carbs"]]},
+chuys:{label:"Chuy's",items:[["Double chicken fajitas","GREEN","No tortillas, skip rice/beans"],["Small guac","YELLOW","Optional"]]},
+foodtrucks:{label:"Food Trucks",items:[["Street taco","YELLOW","Protein-forward"],["Breakfast taco","YELLOW","Protein first"],["Loaded fries","RED","Celebration food"]]},
+generic:{label:"Generic Restaurant",items:[["Protein + vegetables","GREEN","Default choice"],["Lettuce wrap hamburger","GREEN","No bun, no fries"],["Burger no fries","YELLOW","Manageable"]]}
+};
+
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+function esc(s){ return String(s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m])); }
+function isLocked(){ return state.mode === "reset1" || state.mode === "reset7"; }
+
+function choices(){
+ if(state.mode==="reset1") return reset1Choices;
+ if(state.mode==="reset7") return reset7Choices;
+ if(state.mode==="going") return goingChoices;
+ if(state.mode==="celebration") return celebrationChoices;
+ return normalChoices;
+}
+
+function modeCopy(){
+ const map = {
+  slow:["SLOW BURN ACTIVE","Protein first. Real life meals. No spiral.","Normal foods, restaurants, food trucks, and custom entries are available."],
+  reset1:["⚡ 1-DAY RESET LOCKED","Reset locked. Only coach-approved choices today.","No sugars, bread, tortillas, noodles, pizza, dessert, or random add-ons."],
+  reset7:["🔥 7-DAY RESET LOCKED","7-Day Reset. Clean repeatable choices only.","Clean repeatable meals and controlled snacks only."],
+  going:["🍽️ GOING OUT ACTIVE","Strategic flexibility. Enjoy without spiraling.","Restaurant strategy is active."],
+  celebration:["🎉 CELEBRATION ACTIVE","Celebrate intentionally. Protect tomorrow.","Planned treats are allowed with protein anchors."]
+ };
+ return map[state.mode] || map.slow;
+}
+
+function render(){
+ save();
+ const c = modeCopy();
+ document.getElementById("modeTitle").textContent = c[0];
+ document.getElementById("subtitle").textContent = c[1];
+ document.getElementById("modeNote").textContent = c[2];
+ document.getElementById("weightSaved").textContent = state.weight ? "Saved weight: " + state.weight : "No weight saved.";
+ document.getElementById("weightInput").value = state.weight || "";
+ document.querySelectorAll(".modeBtn").forEach(b=>b.classList.remove("active"));
+ const active = document.getElementById("m_"+state.mode);
+ if(active) active.classList.add("active");
+ renderSections();
+}
+
+function renderSections(){
+ const sections = document.getElementById("sections");
+ sections.innerHTML = "";
+ ["morning","meal1","meal2","meal3","snack"].forEach((key,i)=>{
+  const title = key==="morning" ? "MORNING" : key==="snack" ? "SNACK" : "MEAL " + i;
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = '<div class="row"><div class="title">'+title+'</div><button class="btn" onclick="toggleDrawer(\''+key+'\')">+ LOG</button></div><div id="'+key+'List"></div><div id="'+key+'Drawer" class="drawer"></div>';
+  sections.appendChild(card);
+  renderList(key);
+  buildDrawer(key);
+ });
+}
+
+function renderList(key){
+ const box = document.getElementById(key+"List");
+ box.innerHTML = "";
+ state.day[key].forEach((item,idx)=>{
+  const div = document.createElement("div");
+  div.className = "food";
+  div.innerHTML = '<div><div class="foodName">'+esc(item.name)+'</div><div class="foodNote">'+esc(item.note)+'</div></div><div><button class="smallBtn" onclick="editItem(\''+key+'\','+idx+')">EDIT</button> <button class="smallBtn" onclick="deleteItem(\''+key+'\','+idx+')">×</button></div>';
+  box.appendChild(div);
+ });
+}
+
+function choiceButton(item,key){
+ const color = item[1]==="RED" ? "redText" : item[1]==="YELLOW" ? "yellowText" : "greenText";
+ return '<button class="choice" onclick="addItem(\''+key+'\',\''+esc(item[0]).replace(/'/g,"&#39;")+'\',\''+esc(item[1]+" · "+item[2]).replace(/'/g,"&#39;")+'\')"><div class="choiceTitle">'+esc(item[0])+'</div><div class="rating '+color+'">'+item[1]+'</div></button>';
+}
+
+function buildDrawer(key){
+ const box = document.getElementById(key+"Drawer");
+ const pool = key==="morning" ? (isLocked()?morningReset:morningNormal) : choices();
+ let html = "";
+ if(isLocked() && key!=="morning") html += '<div class="notice">LOCKED RESET LIST ONLY. No custom typing or restaurant browsing today.</div>';
+ html += '<div class="grid">' + pool.map(item=>choiceButton(item,key)).join("") + '</div>';
+ if(!isLocked() && key!=="morning"){
+  html += '<select id="'+key+'Rest"><option value="">Choose restaurant/category</option>';
+  Object.keys(restaurants).forEach(r=>{ html += '<option value="'+r+'">'+restaurants[r].label+'</option>'; });
+  html += '</select><select id="'+key+'RestItem" style="display:none"></select><button class="btn green" style="width:100%;margin-top:10px" onclick="addRestaurant(\''+key+'\')">ADD RESTAURANT ITEM</button>';
+  html += '<input id="'+key+'Custom" placeholder="Custom food"><button class="btn green" style="width:100%;margin-top:10px" onclick="addCustom(\''+key+'\')">ADD CUSTOM</button>';
+ }
+ html += '<button class="btn" style="width:100%;margin-top:10px" onclick="closeAll()">DONE</button>';
+ box.innerHTML = html;
+ if(!isLocked() && key!=="morning"){
+  document.getElementById(key+"Rest").addEventListener("change", function(){
+   const sel = document.getElementById(key+"RestItem");
+   sel.innerHTML = "";
+   if(!this.value){ sel.style.display = "none"; return; }
+   restaurants[this.value].items.forEach((it,idx)=>{
+    const opt = document.createElement("option");
+    opt.value = idx;
+    opt.textContent = it[0] + " — " + it[1] + " · " + it[2];
+    sel.appendChild(opt);
+   });
+   sel.style.display = "block";
+  });
+ }
+}
+
+function addRestaurant(key){
+ const r = document.getElementById(key+"Rest").value;
+ const sel = document.getElementById(key+"RestItem");
+ if(!r || sel.style.display==="none") return;
+ const item = restaurants[r].items[Number(sel.value)];
+ addItem(key,item[0],restaurants[r].label + " · " + item[1] + " · " + item[2]);
+}
+
+function addCustom(key){
+ const el = document.getElementById(key+"Custom");
+ if(el && el.value.trim()) addItem(key, el.value.trim(), "CUSTOM");
+}
+
+function addItem(key,name,note){
+ state.day[key].push({name:name,note:note});
+ render();
+ document.getElementById(key+"Drawer").style.display = "block";
+}
+
+function editItem(key,idx){
+ const item = state.day[key][idx];
+ const name = prompt("Edit food line:", item.name);
+ if(name===null) return;
+ const note = prompt("Edit note:", item.note);
+ item.name = name.trim() || item.name;
+ item.note = note===null ? item.note : note.trim();
+ render();
+}
+
+function deleteItem(key,idx){ state.day[key].splice(idx,1); render(); }
+function toggleDrawer(key){
+ const d = document.getElementById(key+"Drawer");
+ const open = d.style.display==="none" || d.style.display==="";
+ closeAll();
+ d.style.display = open ? "block" : "none";
+}
+function closeAll(){ ["morning","meal1","meal2","meal3","snack"].forEach(k=>{const d=document.getElementById(k+"Drawer"); if(d) d.style.display="none";}); }
+function setMode(m){ state.mode=m; closeAll(); render(); document.querySelector('.tab').click(); }
+function saveWeight(){ state.weight = document.getElementById("weightInput").value; render(); }
+function clearToday(){ state.day={morning:[],meal1:[],meal2:[],meal3:[],snack:[]}; render(); }
+function showTab(id,btn){
+ document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+ btn.classList.add("active");
+}
+render();
+</script>
+</body>
+</html>
