@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#0c0c0c" />
+<title>FUEL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0c0c0c;--card:#151515;--soft:#1f1f1f;--line:#292929;--mint:#8dffd3;--text:#f7f7f2;--muted:#777;--yellow:#ffd447;--red:#ff6b88;--green:#54f29b}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;max-width:430px;margin:0 auto;min-height:100vh;padding:22px 18px 70px}
+.bebas{font-family:'Bebas Neue',sans-serif;letter-spacing:.12em}
+.top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.mode-pill{border:1px solid var(--line);background:#151515;border-radius:999px;padding:10px 14px;color:var(--mint);font-size:14px}
+.weight{width:92px;height:72px;border:1px solid var(--line);border-radius:18px;background:#151515;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted)}
+.weight strong{display:block;color:var(--mint);font-size:22px}
+h1{font-family:'Bebas Neue';font-size:64px;line-height:.9;letter-spacing:.02em}
+.subtitle{color:var(--muted);letter-spacing:.12em;margin-top:8px;margin-bottom:22px}
+.tabs{display:flex;gap:14px;overflow-x:auto;margin:22px 0}
+.tab{border:none;background:transparent;color:#555;font-family:'Bebas Neue';font-size:18px;letter-spacing:.12em;padding:14px 10px;border-radius:10px}
+.tab.active{background:var(--mint);color:#07100c}
+.panel{display:none}
+.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:16px}
+.card.hl{border-color:rgba(141,255,211,.35)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.section-title{font-family:'Bebas Neue';letter-spacing:.16em;color:var(--mint);font-size:26px}
+.muted{color:var(--muted)}
+.btn{border:none;background:#222;color:#fff;border-radius:14px;padding:12px 16px;font-weight:700}
+.btn.mint{background:var(--mint);color:#07100c}
+.day-strip{display:flex;gap:10px;overflow-x:auto;margin-bottom:16px;padding-bottom:4px}
+.day-card{min-width:72px;text-align:center;border:1px solid var(--line);background:#151515;border-radius:16px;padding:12px 8px;color:#aaa}
+.day-card.active{border-color:var(--mint);box-shadow:0 0 14px rgba(141,255,211,.25);color:#fff}
+.day-card small{display:block;color:#666;margin-top:4px}
+.food-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid #252525}
+.food-main{font-size:18px}
+.food-sub{font-family:'Bebas Neue';letter-spacing:.1em;color:var(--mint);font-size:16px;margin-top:3px}
+.input-row{display:flex;gap:10px;margin-top:12px}
+input,textarea{width:100%;background:#101010;color:#fff;border:1px solid #333;border-radius:12px;padding:13px;font-size:16px}
+textarea{min-height:80px}
+.size-line{font-size:19px;margin:6px 0}
+.green{color:var(--green)}.yellow{color:var(--yellow)}.red{color:var(--red)}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mode-btn{background:#1b1b1b;border:1px solid #333;border-radius:16px;padding:14px;color:#fff;text-align:left}
+.coach-note{background:#101010;border-left:3px solid var(--mint);padding:12px;border-radius:10px;color:#ccc;line-height:1.45;margin-top:12px}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.quick{background:#202020;border:1px solid #333;color:#fff;border-radius:14px;padding:11px 10px;text-align:left;line-height:1.25;min-height:64px}
+.quick small{display:block;margin-top:4px;font-family:'Bebas Neue';letter-spacing:.1em;font-size:15px}
+.rating{font-family:'Bebas Neue';letter-spacing:.1em;font-size:16px;margin-top:3px}
+.rating.green{color:var(--green)}
+.rating.yellow{color:var(--yellow)}
+.rating.red{color:var(--red)}
+.close{background:transparent;border:none;color:#555;font-size:22px;padding:6px 10px}
+.install{border:1px solid #333;background:#151515;color:#888;border-radius:14px;padding:12px;margin-bottom:14px;line-height:1.4;font-size:14px}
+.card{padding:16px;margin-bottom:14px}
+.section-title{font-size:24px}
+body{padding:18px 16px 64px}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="mode-pill bebas" id="currentMode">● SLOW BURN</div>
+  <div class="weight" onclick="showTab('body')"><div><strong id="weightDisplay">—</strong><span class="bebas">LBS · TAP</span></div></div>
+</div>
+
+<h1>FUEL</h1>
+<div class="subtitle">Steady. Sustainable. No fuss.</div>
+<div class="install">📱 Add to Home Screen for the app feel. Chrome: menu → Add to Home screen.</div>
+
+<div class="tabs">
+  <button class="tab active" data-tab="today">TODAY</button>
+  <button class="tab" data-tab="eats">EATS</button>
+  <button class="tab" data-tab="guide">GUIDE</button>
+  <button class="tab" data-tab="body">BODY</button>
+  <button class="tab" data-tab="train">TRAIN</button>
+  <button class="tab" data-tab="custom">CUSTOM</button>
+</div>
+
+<section id="today" class="panel active">
+  <div class="card hl">
+    <div class="section-title">TODAY</div>
+    <div class="muted" id="todaySub">0 logged items</div>
+    <div class="day-strip" id="dayStrip"></div>
+  </div>
+
+  <div class="card">
+    <div class="row"><div class="section-title">☀️ MORNING STARTER</div><button class="btn" onclick="toggleAdd('morning')">+ LOG</button></div>
+    <div id="morningList"></div>
+    <div id="morningAdd" style="display:none">
+      <div class="quick-grid">
+        <button class="quick" onclick="addPreset('morning','☕ Starbucks protein foam cold brew','Tall · Coach Safe · Green')">☕ Protein foam cold brew<small class="green">Tall · Green</small></button>
+        <button class="quick" onclick="addPreset('morning','☕ Starbucks protein foam cold brew','Grande · Balanced · Yellow')">☕ Protein foam cold brew<small class="yellow">Grande · Yellow</small></button>
+        <button class="quick" onclick="addPreset('morning','☕ Starbucks protein foam cold brew','Venti · Heavier day · Red')">☕ Protein foam cold brew<small class="red">Venti · Red</small></button>
+        <button class="quick" onclick="addPreset('morning','☕ Cold brew heavy cream + SF sweetener','Light cream · Green')">☕ Heavy cream + SF<small class="green">Light · Green</small></button>
+        <button class="quick" onclick="addPreset('morning','☕ Cold brew heavy cream + SF sweetener','Moderate cream · Yellow')">☕ Heavy cream + SF<small class="yellow">Moderate · Yellow</small></button>
+        <button class="quick" onclick="addPreset('morning','☕ Dutch Bros small Cocomo diet style','Small · Half and half · SF · Yellow')">☕ Dutch Bros Cocomo<small class="yellow">Small · Yellow</small></button>
+        <button class="quick" onclick="addPreset('morning','🍵 Tea with SF sweetener','Coach Safe · Green')">🍵 Tea + SF<small class="green">Green</small></button>
+        <button class="quick" onclick="addPreset('morning','☕ Einstein hazelnut coffee + Splenda','Simple · Green')">☕ Einstein hazelnut<small class="green">Green</small></button>
+      </div>
+      <div class="input-row"><input id="morningInput" placeholder="Other morning starter"><button class="btn mint" onclick="addCustom('morning','morningInput')">ADD</button></div>
+    </div>
+  </div>
+
+  <div id="mealCards"></div>
+
+  <div class="card hl">
+    <div class="section-title">CRAVING CHECK</div>
+    <p class="muted">💧 Drink water first</p>
+    <p class="muted">⏱️ Wait 15 minutes</p>
+    <p class="muted">Still hungry? <span class="green">Protein only.</span></p>
+  </div>
+</section>
+
+<section id="eats" class="panel">
+  <div class="card"><div class="section-title">COACH SIZING</div><div class="coach-note">Use real-life serving language. No measuring-cup nonsense unless it actually helps.</div></div>
+  <div class="card"><div class="section-title">☕ STARBUCKS</div><p><strong>Cold Brew + Salted Caramel Protein Foam</strong></p><div class="size-line green">🟢 Tall — Coach Safe</div><div class="size-line yellow">🟡 Grande — Balanced, still workable</div><div class="size-line red">🔴 Venti — Heavier day, log it honestly</div><hr style="border-color:#222;margin:14px 0"><p><strong>Cold Brew + Heavy Cream + SF Sweetener</strong></p><div class="size-line green">🟢 Light cream — safest choice</div><div class="size-line yellow">🟡 Moderate cream — okay if food is tight</div><div class="size-line red">🔴 Heavy pour — treat like a snack</div></div>
+  <div class="card"><div class="section-title">☕ DUTCH BROS</div><p><strong>Small Cocomo — Diet Style</strong></p><div class="size-line yellow">🟡 Small + half and half + SF sweetener — occasional treat</div><div class="size-line red">🔴 Medium/Large — dessert territory</div></div>
+  <div class="card"><div class="section-title">🍗 RESTAURANT BASICS</div><div class="size-line green">🟢 Chicken single</div><div class="size-line yellow">🟡 Double chicken</div><div class="size-line red">🔴 Triple / heavy add-ons</div></div>
+</section>
+
+<section id="guide" class="panel">
+  <div class="card"><div class="section-title">MODES</div><div class="mode-grid"><button class="mode-btn" onclick="setMode('⚡ 1-DAY COACH RESET')">⚡ 1-Day Coach Reset</button><button class="mode-btn" onclick="setMode('🔥 7-DAY RESET')">🔥 7-Day Reset</button><button class="mode-btn" onclick="setMode('🍽️ GOING OUT')">🍽️ Going Out</button><button class="mode-btn" onclick="setMode('🎉 CELEBRATION')">🎉 Celebration Day</button></div><div class="coach-note" id="modeAdvice">Slow Burn: stay steady, protein first, no drama.</div></div>
+  <div class="card"><div class="section-title">GOING OUT MODE</div><p class="muted">Protein earlier. Hydrate. Save appetite strategically. Choose the best available option, not a fantasy option.</p></div>
+  <div class="card"><div class="section-title">CELEBRATION DAY</div><p class="muted">Enjoy intentionally. Add protein before pizza or dessert. Protect tomorrow morning. No guilt spiral.</p></div>
+</section>
+
+<section id="body" class="panel">
+  <div class="card"><div class="section-title">BODY CHECK</div><input id="weightInput" type="number" placeholder="Enter weight"><button class="btn mint" style="margin-top:10px" onclick="saveWeight()">SAVE WEIGHT</button><div class="coach-note">Body recomp focus: trend, waist, chest, strength, and how clothes fit. Not scale panic.</div></div>
+</section>
+
+<section id="train" class="panel">
+  <div class="card"><div class="section-title">TRAIN</div><p class="muted">MaxPro / Bowflex tracking placeholder.</p><div class="quick-grid"><button class="quick" onclick="addPreset('train','MaxPro Push Day','Done')">MaxPro Push</button><button class="quick" onclick="addPreset('train','MaxPro Pull + Legs','Done')">Pull + Legs</button><button class="quick" onclick="addPreset('train','Bowflex','Short finisher')">Bowflex</button><button class="quick" onclick="addPreset('train','Rest Day','Strategic')">Rest Day</button></div></div>
+</section>
+
+<section id="custom" class="panel">
+  <div class="card"><div class="section-title">CUSTOM</div><textarea id="coachNote" placeholder="Custom coach note"></textarea><button class="btn mint" style="margin-top:10px" onclick="saveNote()">SAVE NOTE</button><div class="coach-note" id="savedNote">No custom note yet.</div></div>
+  <div class="card"><div class="section-title">DATA</div><button class="btn" onclick="clearSelectedDay()">Clear selected day</button> <button class="btn" onclick="localStorage.removeItem('fuelV3');location.reload()">Reset app data</button></div>
+</section>
+
+<script>
+const KEY='fuelV3';
+let state=JSON.parse(localStorage.getItem(KEY)||'{}');
+if(!state.days) state.days={};
+if(!state.selectedDate) state.selectedDate=new Date().toISOString().slice(0,10);
+if(!state.mode) state.mode='● SLOW BURN';
+function saveState(){localStorage.setItem(KEY,JSON.stringify(state));render();}
+function selected(){if(!state.days[state.selectedDate]) state.days[state.selectedDate]={morning:[],meal1:[],meal2:[],meal3:[],snack:[],train:[]}; return state.days[state.selectedDate];}
+function fmtDate(d){return d.toISOString().slice(0,10);}
+function dayName(d){return d.toLocaleDateString(undefined,{weekday:'short'}).toUpperCase();}
+function renderDays(){const box=document.getElementById('dayStrip');box.innerHTML='';const now=new Date();for(let i=-2;i<5;i++){const d=new Date(now);d.setDate(now.getDate()+i);const key=fmtDate(d);const count=state.days[key]?Object.values(state.days[key]).flat().length:0;const el=document.createElement('div');el.className='day-card '+(key===state.selectedDate?'active':'');el.innerHTML='<div>'+dayName(d)+'</div><div>'+d.getDate()+'</div><small>'+count+' item'+(count===1?'':'s')+'</small>';el.onclick=function(){state.selectedDate=key;saveState();};box.appendChild(el);}}
+function ratingClass(note){
+  const n=(note||'').toLowerCase();
+  if(n.includes('red')||n.includes('heavier')||n.includes('dessert')) return 'red';
+  if(n.includes('yellow')||n.includes('balanced')||n.includes('moderate')||n.includes('occasional')) return 'yellow';
+  if(n.includes('green')||n.includes('safe')||n.includes('protein first')||n.includes('simple')) return 'green';
+  return '';
+}
+function renderList(id,arr){const box=document.getElementById(id);if(!box)return;box.innerHTML='';arr.forEach(function(x,i){const div=document.createElement('div');div.className='food-item';const rc=ratingClass(x.note);div.innerHTML='<div><div class="food-main">'+x.name+'</div><div class="food-sub '+rc+'">'+(x.note||'')+'</div></div><button class="close">×</button>';div.querySelector('button').onclick=function(){arr.splice(i,1);saveState();};box.appendChild(div);});}
+function mealCard(key,title){return '<div class="card"><div class="row"><div class="section-title">'+title+'</div><button class="btn" onclick="toggleAdd(\''+key+'\')">+ LOG</button></div><div id="'+key+'List"></div><div id="'+key+'Add" style="display:none"><div class="input-row"><input id="'+key+'Input" placeholder="What did you eat?"><button class="btn mint" onclick="addCustom(\''+key+'\',\''+key+'Input\')">ADD</button></div><div class="quick-grid"><button class="quick" onclick="addPreset(\''+key+'\',\'🍗 Chicken\',\'Protein first\')">🍗 Chicken</button><button class="quick" onclick="addPreset(\''+key+'\',\'🥩 Steak / beef\',\'Protein first\')">🥩 Steak</button><button class="quick" onclick="addPreset(\''+key+'\',\'🥚 Eggs\',\'Protein first\')">🥚 Eggs</button><button class="quick" onclick="addPreset(\''+key+'\',\'🍕 Pizza\',\'Celebration strategy\')">🍕 Pizza</button></div></div></div>';}
+function render(){renderDays();const d=selected();document.getElementById('mealCards').innerHTML=mealCard('meal1','MEAL 1')+mealCard('meal2','MEAL 2')+mealCard('meal3','MEAL 3')+mealCard('snack','SNACK');renderList('morningList',d.morning);['meal1','meal2','meal3','snack'].forEach(function(k){renderList(k+'List',d[k]);});const total=Object.values(d).flat().length;document.getElementById('todaySub').textContent=total+' logged item'+(total===1?'':'s');document.getElementById('currentMode').textContent=state.mode||'● SLOW BURN';document.getElementById('weightDisplay').textContent=state.weight||'—';document.getElementById('savedNote').textContent=state.note||'No custom note yet.';modeAdvice();}
+function closeAllAdds(){
+  ['morning','meal1','meal2','meal3','snack'].forEach(function(k){
+    const el=document.getElementById(k+'Add');
+    if(el) el.style.display='none';
+  });
+}
+function toggleAdd(k){
+  const el=document.getElementById(k+'Add');
+  if(!el)return;
+  const willOpen=el.style.display==='none'||el.style.display==='';
+  closeAllAdds();
+  el.style.display=willOpen?'block':'none';
+}
+function addPreset(k,name,note){
+  selected()[k].push({name:name,note:note});
+  closeAllAdds();
+  saveState();
+}
+function addCustom(k,inputId){
+  const el=document.getElementById(inputId);
+  if(el&&el.value.trim()){
+    selected()[k].push({name:el.value.trim(),note:'custom'});
+    el.value='';
+    closeAllAdds();
+    saveState();
+  }
+}
+function showTab(tab){document.querySelectorAll('.tab,.panel').forEach(function(x){x.classList.remove('active');});document.querySelector('.tab[data-tab="'+tab+'"]').classList.add('active');document.getElementById(tab).classList.add('active');}
+document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){showTab(b.dataset.tab);};});
+function setMode(m){state.mode=m;saveState();}
+function modeAdvice(){const m=state.mode||'';let txt='Slow Burn: stay steady, protein first, no drama.';if(m.includes('1-DAY')) txt='1-Day Reset: hydrate, protein first, simplify choices, interrupt the spiral.';if(m.includes('7-DAY')) txt='7-Day Reset: keep choices tight and consistent. No random snacks.';if(m.includes('GOING')) txt='Going Out: protein earlier, hydrate, choose strategically, enjoy without drifting.';if(m.includes('CELEBRATION')) txt='Celebration Day: enjoy intentionally. Add protein before the event and protect tomorrow morning.';document.getElementById('modeAdvice').textContent=txt;}
+function saveWeight(){const w=document.getElementById('weightInput').value;if(w){state.weight=w;saveState();}}
+function saveNote(){state.note=document.getElementById('coachNote').value;saveState();}
+function clearSelectedDay(){delete state.days[state.selectedDate];saveState();}
+render();
+</script>
+</body>
+</html>
