@@ -1,0 +1,330 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FUEL TRAIN RESTORE</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+background:#050505;
+color:#fff;
+font-family:Arial,sans-serif;
+max-width:430px;
+margin:0 auto;
+padding:20px 16px 80px
+}
+.version{
+display:inline-block;
+background:#9dffd9;
+color:#03100b;
+font-weight:900;
+border-radius:999px;
+padding:8px 14px;
+margin-bottom:18px
+}
+h1{
+font-size:72px;
+font-weight:900;
+margin-bottom:10px
+}
+.sub{
+font-size:18px;
+color:#ddd;
+line-height:1.4;
+margin-bottom:22px
+}
+.tabs{
+display:flex;
+gap:10px;
+margin-bottom:22px;
+overflow:auto
+}
+.tab{
+border:none;
+background:#1f1f1f;
+color:#ddd;
+padding:14px 18px;
+border-radius:16px;
+font-weight:900;
+font-size:16px;
+min-width:90px
+}
+.tab.active{
+background:#9dffd9;
+color:#03100b
+}
+.panel{display:none}
+.panel.active{display:block}
+.card{
+background:#111;
+border:1px solid #333;
+border-radius:24px;
+padding:20px;
+margin-bottom:18px
+}
+.hot{border-color:#9dffd9}
+.title{
+font-size:28px;
+font-weight:900;
+letter-spacing:2px;
+color:#9dffd9;
+margin-bottom:10px
+}
+.modeBox{
+background:#171717;
+border-left:5px solid #9dffd9;
+padding:14px;
+border-radius:14px;
+line-height:1.5;
+color:#eee
+}
+.row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px
+}
+.btn{
+border:none;
+background:#242424;
+color:#fff;
+padding:12px 16px;
+border-radius:14px;
+font-weight:900
+}
+.green{
+background:#9dffd9;
+color:#03100b
+}
+.exercise{
+background:#171717;
+border:1px solid #333;
+border-radius:18px;
+padding:16px;
+margin-top:12px
+}
+.exercise h3{
+font-size:22px;
+margin-bottom:10px;
+color:#9dffd9
+}
+.exercise ul{
+padding-left:18px;
+line-height:1.7;
+color:#eee
+}
+.note{
+margin-top:12px;
+background:#1a1a1a;
+border-left:4px solid #9dffd9;
+padding:12px;
+border-radius:12px;
+line-height:1.5
+}
+.energy{
+display:flex;
+gap:10px;
+margin-top:12px
+}
+.energy button{
+flex:1;
+padding:12px;
+border-radius:12px;
+border:none;
+font-weight:900;
+color:#fff
+}
+.greenE{background:#2f8f5b}
+.yellowE{background:#b38d21}
+.redE{background:#a63d57}
+.status{
+margin-top:12px;
+color:#9dffd9;
+font-weight:900
+}
+</style>
+</head>
+<body>
+
+<div class="version">FUEL TRAIN RESTORE</div>
+
+<h1>FUEL</h1>
+<div class="sub" id="subtitle">Protein first. Real life meals. No spiral.</div>
+
+<div class="tabs">
+<button class="tab active" onclick="showTab('today',this)">TODAY</button>
+<button class="tab" onclick="showTab('modes',this)">MODES</button>
+<button class="tab" onclick="showTab('body',this)">BODY</button>
+<button class="tab" onclick="showTab('train',this)">TRAIN</button>
+</div>
+
+<section id="today" class="panel active">
+<div class="card hot">
+<div class="title">SLOW BURN ACTIVE</div>
+<div class="modeBox">
+Normal foods, restaurants, food trucks, and custom entries are available.
+</div>
+</div>
+
+<div class="card">
+<div class="row">
+<div class="title">MORNING</div>
+<button class="btn">+ LOG</button>
+</div>
+</div>
+
+<div class="card">
+<div class="row">
+<div class="title">MEAL 1</div>
+<button class="btn">+ LOG</button>
+</div>
+</div>
+
+<div class="card">
+<div class="row">
+<div class="title">MEAL 2</div>
+<button class="btn">+ LOG</button>
+</div>
+</div>
+
+<div class="card">
+<div class="row">
+<div class="title">MEAL 3</div>
+<button class="btn">+ LOG</button>
+</div>
+</div>
+
+<div class="card">
+<div class="row">
+<div class="title">SNACK</div>
+<button class="btn">+ LOG</button>
+</div>
+</div>
+</section>
+
+<section id="modes" class="panel">
+<div class="card">
+<div class="title">MODES</div>
+
+<button class="btn green" style="width:100%;margin-bottom:10px">⚡ 1-DAY RESET</button>
+<button class="btn" style="width:100%;margin-bottom:10px">🔥 7-DAY RESET</button>
+<button class="btn" style="width:100%;margin-bottom:10px">🍽️ GOING OUT</button>
+<button class="btn" style="width:100%">🎉 CELEBRATION</button>
+
+<div class="note" style="margin-top:18px">
+Reset days simplify decisions and lock the day into cleaner coach-approved choices.
+</div>
+</div>
+</section>
+
+<section id="body" class="panel">
+<div class="card">
+<div class="title">BODY CHECK</div>
+
+<input id="weight" placeholder="Enter weight"
+style="width:100%;padding:14px;border-radius:14px;border:1px solid #555;background:#1a1a1a;color:#fff;font-size:18px">
+
+<button class="btn green" style="width:100%;margin-top:12px" onclick="saveWeight()">SAVE WEIGHT</button>
+
+<div class="status" id="weightStatus">No weight saved.</div>
+</div>
+</section>
+
+<section id="train" class="panel">
+
+<div class="card">
+<div class="title">TRAINING</div>
+
+<div class="exercise">
+<h3>Push Day</h3>
+<ul>
+<li>Incline Vertical BP</li>
+<li>Vertical BP</li>
+<li>High-to-Low Fly</li>
+<li>Shoulder Press</li>
+<li>Lateral Raise</li>
+<li>Triceps Pushdowns</li>
+<li>Kickbacks</li>
+</ul>
+</div>
+
+<div class="exercise">
+<h3>Pull + Legs</h3>
+<ul>
+<li>Seated Rows</li>
+<li>Lat Pulldown</li>
+<li>Hack Squats</li>
+<li>Straight-Arm Pulldown</li>
+<li>Reverse Fly</li>
+<li>Biceps Curls</li>
+</ul>
+</div>
+
+<div class="exercise">
+<h3>Bowflex / Cardio</h3>
+<ul>
+<li>6–15 min depending on day</li>
+<li>Level 2–4 preferred</li>
+<li>Recovery support</li>
+</ul>
+</div>
+
+<div class="note">
+Hero sets are earned, not chased. Protein first. Stay consistent.
+</div>
+
+<div class="energy">
+<button class="greenE" onclick="setEnergy('GREEN ENERGY')">GREEN</button>
+<button class="yellowE" onclick="setEnergy('YELLOW ENERGY')">YELLOW</button>
+<button class="redE" onclick="setEnergy('RED ENERGY')">RED</button>
+</div>
+
+<button class="btn green" style="width:100%;margin-top:14px" onclick="workoutDone()">WORKOUT COMPLETE</button>
+
+<div class="status" id="trainStatus">No workout logged yet.</div>
+
+</div>
+</section>
+
+<script>
+function showTab(id,btn){
+document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+btn.classList.add('active');
+}
+
+function saveWeight(){
+const val=document.getElementById('weight').value;
+localStorage.setItem('fuelWeight',val);
+document.getElementById('weightStatus').innerText='Saved weight: '+val;
+}
+
+function workoutDone(){
+localStorage.setItem('fuelWorkout','Workout completed today');
+document.getElementById('trainStatus').innerText='Workout completed today 💪';
+}
+
+function setEnergy(v){
+localStorage.setItem('fuelEnergy',v);
+document.getElementById('trainStatus').innerText=v;
+}
+
+window.onload=function(){
+const w=localStorage.getItem('fuelWeight');
+if(w){
+document.getElementById('weightStatus').innerText='Saved weight: '+w;
+document.getElementById('weight').value=w;
+}
+const t=localStorage.getItem('fuelWorkout');
+const e=localStorage.getItem('fuelEnergy');
+if(t) document.getElementById('trainStatus').innerText=t;
+if(e) document.getElementById('trainStatus').innerText=e;
+}
+</script>
+
+</body>
+</html>
