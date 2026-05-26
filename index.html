@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="FUEL" />
+  <meta name="theme-color" content="#0c0c0c" />
+  <title>FUEL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    :root{
+      --bg:#0c0c0c;
+      --card:#151515;
+      --card2:#1c1c1c;
+      --border:#2a2a2a;
+      --text:#f6f1e8;
+      --muted:#a7a095;
+      --gold:#d8b46a;
+      --green:#59c778;
+      --yellow:#e7c85a;
+      --red:#e46a6a;
+      --blue:#78a6ff;
+    }
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;overflow-x:hidden}
+    body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+    .app{max-width:460px;margin:0 auto;min-height:100vh;padding:18px 16px 28px;position:relative}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .menu-btn,.icon-btn{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:16px;padding:11px 13px;font-size:16px}
+    .brand{text-align:center}
+    .brand h1{font-family:"Bebas Neue",sans-serif;font-size:46px;letter-spacing:3px;line-height:.9;color:var(--gold)}
+    .brand p{font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+    .date-chip{font-size:12px;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:7px 10px;background:#101010}
+    .hero{background:linear-gradient(145deg,#171717,#101010);border:1px solid var(--border);border-radius:28px;padding:20px;margin-bottom:14px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+    .hero h2{font-size:21px;margin-bottom:8px}
+    .hero p{color:var(--muted);line-height:1.4;font-size:14px}
+    .status-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0}
+    .status-btn{border:1px solid var(--border);background:var(--card2);color:var(--text);border-radius:18px;padding:14px 8px;font-weight:700}
+    .status-btn.active.green{border-color:var(--green);box-shadow:0 0 0 1px var(--green) inset}
+    .status-btn.active.yellow{border-color:var(--yellow);box-shadow:0 0 0 1px var(--yellow) inset}
+    .status-btn.active.red{border-color:var(--red);box-shadow:0 0 0 1px var(--red) inset}
+    .section{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:16px;margin:13px 0}
+    .section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .section-title h3{font-size:17px}
+    .small-link{font-size:12px;color:var(--gold);background:none;border:none}
+    .meal-card{background:#101010;border:1px solid var(--border);border-radius:18px;padding:13px;margin-bottom:10px}
+    .meal-card label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px}
+    textarea,input,select{
+      width:100%;background:#0b0b0b;border:1px solid var(--border);border-radius:14px;color:var(--text);
+      padding:12px;font-family:inherit;font-size:15px;outline:none;
+    }
+    textarea{min-height:58px;resize:vertical}
+    .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+    .pill{border:1px solid var(--border);background:#101010;color:var(--text);border-radius:999px;padding:11px 10px;font-size:13px}
+    .pill.gold{border-color:rgba(216,180,106,.6);color:var(--gold)}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+    .primary,.secondary,.danger{
+      border:none;border-radius:17px;padding:14px 12px;font-weight:700;font-size:15px;
+    }
+    .primary{background:var(--gold);color:#111}
+    .secondary{background:#222;color:var(--text);border:1px solid var(--border)}
+    .danger{background:#2a1414;color:#ffb8b8;border:1px solid #543030}
+    .summary-box{white-space:pre-wrap;background:#0b0b0b;border:1px solid var(--border);border-radius:18px;padding:14px;color:#e7dfd2;font-size:14px;line-height:1.45}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.2s;z-index:20}
+    .overlay.show{opacity:1;pointer-events:auto}
+    .drawer{
+      position:fixed;top:0;left:0;height:100%;width:min(86vw,360px);background:#111;border-right:1px solid var(--border);
+      transform:translateX(-105%);transition:.25s ease;z-index:30;padding:22px 16px;overflow:auto;
+    }
+    .drawer.show{transform:translateX(0)}
+    .drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .drawer-head h2{font-family:"Bebas Neue";font-size:38px;color:var(--gold);letter-spacing:2px}
+    .drawer button.menu-item{
+      width:100%;text-align:left;background:#171717;border:1px solid var(--border);color:var(--text);
+      border-radius:18px;padding:15px;margin:7px 0;font-size:15px;
+    }
+    .drawer .hint{color:var(--muted);font-size:13px;line-height:1.4;margin:12px 4px 18px}
+    .modal{
+      position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(120%);
+      width:min(92vw,430px);background:#121212;border:1px solid var(--border);border-radius:28px;
+      z-index:40;padding:18px;box-shadow:0 -12px 50px rgba(0,0,0,.55);transition:.25s ease;
+    }
+    .modal.show{transform:translateX(-50%) translateY(0)}
+    .modal h2{font-size:20px;margin-bottom:8px}
+    .modal p{color:var(--muted);font-size:14px;line-height:1.4;margin-bottom:12px}
+    .modal-list{display:grid;gap:9px;margin:12px 0}
+    .choice{background:#1a1a1a;border:1px solid var(--border);color:var(--text);border-radius:16px;padding:13px;text-align:left}
+    .choice strong{display:block;margin-bottom:3px}
+    .choice span{display:block;color:var(--muted);font-size:12px;line-height:1.35}
+    .modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .hidden{display:none}
+    .tiny{font-size:12px;color:var(--muted);line-height:1.4}
+  </style>
+</head>
+<body>
+  <div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
+
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <h2>FUEL</h2>
+      <button class="icon-btn" onclick="closeAllPanels()">✕</button>
+    </div>
+    <p class="hint">Simple daily fuel tracking. No confusing backup tools, no whole-day repeat meals.</p>
+    <button class="menu-item" onclick="openModal('energyModal')">⚡ Energy Ranking Today</button>
+    <button class="menu-item" onclick="openModal('favoriteModal')">☕ Favorite Food / Drink</button>
+    <button class="menu-item" onclick="showSnapshot()">📸 Today’s Snapshot</button>
+    <button class="menu-item" onclick="openModal('oneDayResetModal')">🔄 1 Day Coach Reset</button>
+    <button class="menu-item" onclick="openModal('sevenDayResetModal')">🔥 7 Day Reset</button>
+    <button class="menu-item" onclick="clearToday()">🧹 Clear Today</button>
+  </aside>
+
+  <main class="app">
+    <div class="topbar">
+      <button class="menu-btn" onclick="openDrawer()">☰</button>
+      <div class="brand">
+        <h1>FUEL</h1>
+        <p>Protein first. Cravings second.</p>
+      </div>
+      <div class="date-chip" id="todayChip"></div>
+    </div>
+
+    <section class="hero">
+      <h2>Today’s Check-In</h2>
+      <p>Pick your color, name your energy, and log the simple stuff that keeps the day clean.</p>
+      <div class="status-row">
+        <button class="status-btn green" onclick="setStatus('Green')">Green</button>
+        <button class="status-btn yellow" onclick="setStatus('Yellow')">Yellow</button>
+        <button class="status-btn red" onclick="setStatus('Red')">Red</button>
+      </div>
+      <input id="energyName" placeholder="Energy Ranking Today: steady, flat, strong, tired..." oninput="saveState()" />
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h3>Meals</h3>
+        <button class="small-link" onclick="openModal('favoriteModal')">Add favorite</button>
+      </div>
+
+      <div class="meal-card">
+        <label>Meal 1</label>
+        <textarea id="meal1" placeholder="Example: protein coffee + chicken..." oninput="saveState()"></textarea>
+      </div>
+      <div class="meal-card">
+        <label>Meal 2</label>
+        <textarea id="meal2" placeholder="Example: salad, quiche, yogurt..." oninput="saveState()"></textarea>
+      </div>
+      <div class="meal-card">
+        <label>Meal 3</label>
+        <textarea id="meal3" placeholder="Example: dinner plan..." oninput="saveState()"></textarea>
+      </div>
+
+      <div class="quick-grid">
+        <button class="pill gold" onclick="addToNextMeal('Protein coffee')">Protein coffee</button>
+        <button class="pill gold" onclick="addToNextMeal('Oikos PRO yogurt')">Oikos PRO</button>
+        <button class="pill" onclick="addToNextMeal('Chicken meal')">Chicken meal</button>
+        <button class="pill" onclick="addToNextMeal('Cold brew')">Cold brew</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h3>Notes</h3>
+      </div>
+      <textarea id="notes" placeholder="Cravings, energy, wins, anything useful..." oninput="saveState()"></textarea>
+      <div class="actions">
+        <button class="primary" onclick="showSnapshot()">Snapshot</button>
+        <button class="secondary" onclick="copySnapshot()">Copy Snapshot</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h3>Today’s Snapshot</h3>
+      </div>
+      <div class="summary-box" id="snapshotBox">Tap Snapshot when ready.</div>
+    </section>
+  </main>
+
+  <section class="modal" id="energyModal">
+    <h2>Energy Ranking Today</h2>
+    <p>Name the feel of the day. This replaces the confusing “Coach Reflection” wording.</p>
+    <div class="modal-list">
+      <button class="choice" onclick="setEnergy('Strong and steady')"><strong>Strong and steady</strong><span>Good energy, clear control.</span></button>
+      <button class="choice" onclick="setEnergy('Yellow but disciplined')"><strong>Yellow but disciplined</strong><span>Not perfect energy, but still on plan.</span></button>
+      <button class="choice" onclick="setEnergy('Flat but moving')"><strong>Flat but moving</strong><span>Lower energy. Keep it simple.</span></button>
+      <button class="choice" onclick="setEnergy('Reset needed')"><strong>Reset needed</strong><span>Use the 1 Day Reset if needed.</span></button>
+    </div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeAllPanels()">Cancel</button>
+      <button class="primary" onclick="closeAllPanels()">Done</button>
+    </div>
+  </section>
+
+  <section class="modal" id="favoriteModal">
+    <h2>Favorite Food / Drink</h2>
+    <p>Choose one favorite to add to the next open meal box. This does not save or repeat the whole day.</p>
+    <div class="modal-list">
+      <button class="choice" onclick="addFavoriteAndClose('Protein coffee')"><strong>Protein coffee</strong><span>Premier RTD style protein coffee.</span></button>
+      <button class="choice" onclick="addFavoriteAndClose('Salted caramel protein cold foam cold brew')"><strong>Salted caramel protein cold foam cold brew</strong><span>Black cold brew with protein foam top.</span></button>
+      <button class="choice" onclick="addFavoriteAndClose('Cold brew with heavy cream and sugar-free sweetener')"><strong>Cold brew with heavy cream</strong><span>Simple lower-carb coffee option.</span></button>
+      <button class="choice" onclick="addFavoriteAndClose('Dutch Bros small Cocomo diet style with half and half and sugar-free sweetener')"><strong>Dutch Bros Cocomo</strong><span>Small, diet style, half and half.</span></button>
+      <button class="choice" onclick="addFavoriteAndClose('Oikos PRO yogurt')"><strong>Oikos PRO yogurt</strong><span>Easy protein fridge staple.</span></button>
+      <button class="choice" onclick="addFavoriteAndClose('Chicken meal')"><strong>Chicken meal</strong><span>Simple protein-first anchor.</span></button>
+    </div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeAllPanels()">Cancel</button>
+      <button class="primary" onclick="closeAllPanels()">Done</button>
+    </div>
+  </section>
+
+  <section class="modal" id="oneDayResetModal">
+    <h2>1 Day Coach Reset</h2>
+    <p>Use this when you just need one clean day, not a whole week.</p>
+    <div class="summary-box">Meal 1: protein coffee + lean protein
+Meal 2: chicken or lean protein + salad/vegetable
+Meal 3: protein shake or clean protein dinner
+Rule: protein first, cravings second.
+Keep drinks simple. No hero dieting.</div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeAllPanels()">Cancel</button>
+      <button class="primary" onclick="applyOneDayReset()">Use This</button>
+    </div>
+  </section>
+
+  <section class="modal" id="sevenDayResetModal">
+    <h2>7 Day Reset</h2>
+    <p>Keep this as the stricter short-term reset when you want structure.</p>
+    <div class="summary-box">Daily anchor:
+1. Protein coffee or protein-forward breakfast
+2. Lean protein lunch
+3. Lean protein dinner or shake
+4. Oikos PRO if needed
+5. Keep coffee add-ons controlled
+6. Night snacking: protein or almonds only
+7. No panic cuts. Keep it repeatable.</div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeAllPanels()">Cancel</button>
+      <button class="primary" onclick="closeAllPanels()">Got It</button>
+    </div>
+  </section>
+
+  <script>
+    const stateKey = "fuelAppState_v3_clean";
+
+    const ids = ["energyName","meal1","meal2","meal3","notes"];
+
+    function todayLabel(){
+      const d = new Date();
+      return d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});
+    }
+
+    function openDrawer(){
+      document.getElementById("drawer").classList.add("show");
+      document.getElementById("overlay").classList.add("show");
+    }
+
+    function closeAllPanels(){
+      document.getElementById("drawer").classList.remove("show");
+      document.getElementById("overlay").classList.remove("show");
+      document.querySelectorAll(".modal").forEach(m => m.classList.remove("show"));
+    }
+
+    function openModal(id){
+      closeAllPanels();
+      document.getElementById("overlay").classList.add("show");
+      document.getElementById(id).classList.add("show");
+    }
+
+    function setStatus(status){
+      localStorage.setItem("fuelStatus", status);
+      document.querySelectorAll(".status-btn").forEach(b => b.classList.remove("active"));
+      const btn = [...document.querySelectorAll(".status-btn")].find(b => b.textContent.trim() === status);
+      if(btn) btn.classList.add("active");
+      saveState();
+    }
+
+    function setEnergy(text){
+      document.getElementById("energyName").value = text;
+      saveState();
+      closeAllPanels();
+    }
+
+    function nextMealBox(){
+      for(const id of ["meal1","meal2","meal3"]){
+        const el = document.getElementById(id);
+        if(!el.value.trim()) return el;
+      }
+      return document.getElementById("meal3");
+    }
+
+    function addToNextMeal(text){
+      const box = nextMealBox();
+      box.value = box.value.trim() ? box.value.trim() + "\\n" + text : text;
+      saveState();
+    }
+
+    function addFavoriteAndClose(text){
+      addToNextMeal(text);
+      closeAllPanels();
+    }
+
+    function applyOneDayReset(){
+      document.getElementById("meal1").value = "Protein coffee + lean protein";
+      document.getElementById("meal2").value = "Chicken or lean protein + salad/vegetable";
+      document.getElementById("meal3").value = "Protein shake or clean protein dinner";
+      document.getElementById("notes").value = "1 Day Reset: protein first, cravings second. Keep drinks simple. No hero dieting.";
+      saveState();
+      closeAllPanels();
+      showSnapshot();
+    }
+
+    function snapshotText(){
+      const status = localStorage.getItem("fuelStatus") || "Not selected";
+      const energy = document.getElementById("energyName").value.trim() || "Not named yet";
+      const meal1 = document.getElementById("meal1").value.trim() || "Empty";
+      const meal2 = document.getElementById("meal2").value.trim() || "Empty";
+      const meal3 = document.getElementById("meal3").value.trim() || "Empty";
+      const notes = document.getElementById("notes").value.trim() || "None";
+
+      return `FUEL Snapshot — ${todayLabel()}
+
+Status: ${status}
+Energy Ranking Today: ${energy}
+
+Meal 1:
+${meal1}
+
+Meal 2:
+${meal2}
+
+Meal 3:
+${meal3}
+
+Notes:
+${notes}`;
+    }
+
+    function showSnapshot(){
+      closeAllPanels();
+      document.getElementById("snapshotBox").textContent = snapshotText();
+      saveState();
+      window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+    }
+
+    async function copySnapshot(){
+      const text = snapshotText();
+      document.getElementById("snapshotBox").textContent = text;
+      try{
+        await navigator.clipboard.writeText(text);
+        alert("Snapshot copied.");
+      }catch(e){
+        alert("Copy did not work on this device. You can still press and hold the snapshot text to copy.");
+      }
+    }
+
+    function saveState(){
+      const data = {};
+      ids.forEach(id => data[id] = document.getElementById(id).value);
+      data.status = localStorage.getItem("fuelStatus") || "";
+      localStorage.setItem(stateKey, JSON.stringify(data));
+    }
+
+    function loadState(){
+      document.getElementById("todayChip").textContent = todayLabel();
+      try{
+        const data = JSON.parse(localStorage.getItem(stateKey) || "{}");
+        ids.forEach(id => {
+          if(data[id]) document.getElementById(id).value = data[id];
+        });
+        if(data.status) setStatus(data.status);
+        else {
+          const oldStatus = localStorage.getItem("fuelStatus");
+          if(oldStatus) setStatus(oldStatus);
+        }
+      }catch(e){}
+    }
+
+    function clearToday(){
+      if(!confirm("Clear today's FUEL log?")) return;
+      ids.forEach(id => document.getElementById(id).value = "");
+      localStorage.removeItem("fuelStatus");
+      localStorage.removeItem(stateKey);
+      document.querySelectorAll(".status-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById("snapshotBox").textContent = "Tap Snapshot when ready.";
+      closeAllPanels();
+    }
+
+    loadState();
+  </script>
+</body>
+</html>
